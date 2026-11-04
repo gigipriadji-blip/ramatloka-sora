@@ -1,0 +1,2496 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ramatloka Sora - Event Audio Cue Matrix</title>
+  <!-- PWA & Mobile Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <meta name="theme-color" content="#161b22">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    :root {
+      --bg-darkest: #0d1015;
+      --bg-panel: #161b22;
+      --bg-track: #1f2530;
+      --bg-slot: #262e3b;
+      --bg-slot-hover: #323d4e;
+      --border: #323a46;
+      --text-main: #f0f6fc;
+      --text-muted: #8b949e;
+      --gold: #e3b341;
+      --gold-hover: #f1c24e;
+      --green: #2ea043;
+      --green-bright: #3fb950;
+      --danger: #f85149;
+      --midi-color: #58a6ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-darkest);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Top Transport Header */
+    header {
+      background-color: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      padding: 6px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      flex-shrink: 0;
+      z-index: 50;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      letter-spacing: 1px;
+      color: var(--gold);
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .global-transport {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background-color: var(--bg-darkest);
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .transport-btn {
+      width: 36px;
+      height: 32px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: var(--bg-track);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .transport-btn:hover {
+      background-color: var(--border);
+    }
+
+    .transport-btn.btn-play-global {
+      color: var(--green-bright);
+    }
+
+    .transport-btn.btn-play-global.active {
+      background-color: var(--green);
+      color: #000;
+      border-color: var(--green-bright);
+    }
+
+    .transport-btn.btn-stop-global {
+      color: var(--danger);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    button {
+      background-color: var(--bg-track);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    button:hover {
+      background-color: var(--border);
+    }
+
+    button.btn-accent {
+      background-color: var(--gold);
+      color: #000;
+      border-color: var(--gold);
+    }
+
+    button.btn-accent:hover {
+      background-color: var(--gold-hover);
+    }
+
+    button.btn-midi {
+      background-color: #1f2a38;
+      border-color: #388bfd;
+      color: var(--midi-color);
+    }
+
+    button.btn-midi.active {
+      background-color: #388bfd;
+      color: #000;
+      box-shadow: 0 0 10px rgba(56, 139, 253, 0.5);
+    }
+
+    /* Menu Dropdown File Header */
+    .dropdown-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 4px;
+      background-color: #1c222b;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+      min-width: 170px;
+      display: none;
+      flex-direction: column;
+      z-index: 100;
+      padding: 4px 0;
+    }
+
+    .dropdown-menu.show {
+      display: flex;
+    }
+
+    .dropdown-item {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .dropdown-item:hover {
+      background-color: #2b3543;
+      color: var(--gold);
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background-color: var(--border);
+      margin: 4px 0;
+    }
+
+    .btn-icon-fullscreen {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+
+    .btn-icon-fullscreen svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--text-main);
+    }
+
+    /* MIDI Mapping Visual Highlights */
+    body.midi-mode-active .midi-mappable {
+      outline: 2px dashed var(--midi-color) !important;
+      outline-offset: 1px;
+      cursor: pointer !important;
+    }
+
+    body.midi-mode-active .midi-mappable.midi-selected {
+      outline: 2px solid #ff7b72 !important;
+      background-color: rgba(255, 123, 114, 0.2) !important;
+    }
+
+    body.midi-mode-active .midi-mappable.midi-assigned {
+      outline: 2px solid var(--midi-color) !important;
+      background-color: rgba(56, 139, 253, 0.25) !important;
+    }
+
+    /* Middle Area: Session Matrix View */
+    .session-view {
+      flex: 1;
+      background-color: var(--bg-darkest);
+      display: flex;
+      flex-direction: column;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 10px 12px;
+    }
+
+    .matrix-board {
+      display: flex;
+      height: 100%;
+      min-width: max-content;
+      gap: 8px;
+    }
+
+    /* Track Column Layout */
+    .track-column {
+      width: 175px;
+      min-width: 175px;
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .track-column.master-column {
+      width: 165px;
+      min-width: 165px;
+      background-color: #1a1e24;
+      border-color: #444c56;
+    }
+
+    .track-header {
+      background-color: var(--bg-track);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      gap: 4px;
+      height: 38px;
+    }
+
+    .master-column .track-header {
+      background-color: #272c36;
+    }
+
+    .track-name-input {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--gold);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      outline: none;
+      width: 100px;
+      border-radius: 3px;
+      padding: 2px 4px;
+      cursor: text;
+    }
+
+    .track-name-input:focus {
+      background: #0d1117;
+      border-color: var(--gold);
+    }
+
+    .btn-del-track {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      padding: 0 4px;
+      cursor: pointer;
+    }
+
+    .btn-del-track:hover {
+      color: var(--danger);
+      background: transparent;
+    }
+
+    /* Synchronized Scroll Viewport */
+    .slots-scroll-viewport {
+      flex: 1;
+      overflow-y: hidden;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      cursor: default;
+    }
+
+    .master-column .slots-scroll-viewport {
+      overflow-y: auto;
+    }
+
+    .master-column .slots-scroll-viewport::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .master-column .slots-scroll-viewport::-webkit-scrollbar-thumb {
+      background: var(--gold);
+      border-radius: 3px;
+    }
+
+    /* Clip Slot */
+    .clip-slot {
+      height: 48px;
+      min-height: 48px;
+      background-color: var(--bg-slot);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      padding: 4px 6px;
+      gap: 6px;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transition: background-color 0.1s, border-color 0.1s;
+    }
+
+    .clip-slot:hover {
+      background-color: var(--bg-slot-hover);
+      border-color: var(--text-muted);
+    }
+
+    .clip-slot.selected {
+      border: 1.5px solid var(--gold) !important;
+      box-shadow: 0 0 6px rgba(227, 179, 65, 0.4);
+    }
+
+    .clip-slot.playing {
+      background-color: #173322;
+      border-color: var(--green);
+    }
+
+    .clip-slot.disabled {
+      opacity: 0.45;
+      filter: grayscale(0.8);
+    }
+
+    .clip-slot.drag-over {
+      border: 2px dashed var(--gold) !important;
+      background-color: #2b394e !important;
+    }
+
+    .clip-trigger-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 3px;
+      border: none;
+      background: #0f1318;
+      color: var(--green-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .clip-slot.playing .clip-trigger-btn {
+      background: var(--green-bright);
+      color: #000;
+    }
+
+    .clip-info {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .clip-title {
+      font-size: 0.73rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .clip-badge {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    .clip-slot.missing .clip-badge {
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    .empty-slot {
+      border: 1px dashed #303742;
+      background: transparent;
+      justify-content: center;
+      color: #57606a;
+      font-size: 0.72rem;
+    }
+
+    .empty-slot:hover {
+      border-color: var(--border);
+      background-color: rgba(255, 255, 255, 0.02);
+      color: var(--text-muted);
+    }
+
+    .slot-menu-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0 4px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .slot-menu-btn:hover {
+      color: var(--text-main);
+      background: transparent;
+    }
+
+    /* Master Scene Slot */
+    .scene-slot {
+      height: 48px;
+      min-height: 48px;
+      background-color: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      padding: 4px 8px;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .scene-title-input {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      font-size: 0.75rem;
+      font-weight: 600;
+      outline: none;
+      width: 95px;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+
+    .scene-title-input:focus {
+      background: #101318;
+      border-color: var(--gold);
+    }
+
+    /* Sticky Bottom Mixer Strip */
+    .track-mixer {
+      margin-top: auto;
+      border-top: 1px solid var(--border);
+      padding: 8px 10px;
+      background-color: #171b22;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    .master-column .track-mixer {
+      background-color: #191e26;
+      border-top: 1px solid #444c56;
+    }
+
+    .pan-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .mixer-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    .pan-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      background: #0d1117;
+      border-radius: 2px;
+      outline: none;
+      border: 1px solid var(--border);
+    }
+
+    .pan-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--gold);
+      cursor: pointer;
+    }
+
+    .fader-vu-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      height: 90px;
+      background: #111419;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 6px 8px;
+    }
+
+    .vertical-fader-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      width: 26px;
+      position: relative;
+    }
+
+    .vertical-fader {
+      -webkit-appearance: none;
+      appearance: none;
+      writing-mode: vertical-lr;
+      direction: rtl;
+      width: 8px;
+      height: 76px;
+      background: #21262d;
+      border-radius: 4px;
+      outline: none;
+      border: 1px solid var(--border);
+      cursor: pointer;
+    }
+
+    .vertical-fader::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 10px;
+      background: var(--gold);
+      border: 1px solid #000;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+
+    .vu-meter-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 76px;
+      width: 12px;
+      background: #0a0d11;
+      border: 1px solid #252b35;
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+      justify-content: flex-end;
+    }
+
+    .vu-fill {
+      width: 100%;
+      height: 0%;
+      background: linear-gradient(to top, #2ea043 60%, #e3b341 85%, #f85149 100%);
+      transition: height 0.05s ease-out;
+    }
+
+    /* Bottom: Waveform View */
+    .detail-view {
+      height: 235px;
+      min-height: 235px;
+      background-color: var(--bg-panel);
+      border-top: 2px solid var(--border);
+      display: flex;
+      padding: 10px 16px;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .clip-properties {
+      width: 300px;
+      min-width: 300px;
+      border-right: 1px solid var(--border);
+      padding-right: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .prop-header {
+      font-size: 0.8rem;
+      color: var(--gold);
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .prop-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.78rem;
+    }
+
+    .prop-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .prop-row label {
+      color: var(--text-muted);
+    }
+
+    .prop-row input[type="number"] {
+      width: 75px;
+      background-color: var(--bg-darkest);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 3px 6px;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      text-align: right;
+    }
+
+    .prop-gain-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 110px;
+      height: 5px;
+      background: #0d1117;
+      border-radius: 3px;
+      outline: none;
+      border: 1px solid var(--border);
+    }
+
+    .prop-gain-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--gold);
+      cursor: pointer;
+    }
+
+    .waveform-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .waveform-info-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .canvas-container {
+      flex: 1;
+      background-color: #0b0e14;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      position: relative;
+      cursor: crosshair;
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Dropdown & Modal Styles */
+    .custom-context-menu {
+      position: fixed;
+      display: none;
+      background-color: #1c222b;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      min-width: 150px;
+      padding: 4px 0;
+    }
+
+    .context-menu-item {
+      padding: 8px 12px;
+      font-size: 0.78rem;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .context-menu-item:hover {
+      background-color: #2b3543;
+      color: var(--gold);
+    }
+
+    .context-menu-item.danger:hover {
+      color: var(--danger);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(5, 7, 10, 0.75);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    .modal-card {
+      background: #161b22;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      width: 460px;
+      max-width: 90vw;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1b222c;
+    }
+
+    .modal-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-body {
+      padding: 16px 18px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+      background: #141820;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .missing-file-list {
+      list-style: none;
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .missing-file-item {
+      background: #0d1117;
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 1px solid #28303e;
+      color: var(--text-main);
+      font-size: 0.78rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #slotFileInput, #projectFileInput, #relocateFileInput {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Global Header -->
+  <header>
+    <div class="brand-group">
+      <span class="brand-title">Ramatloka Sora</span>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">| Cue Matrix Engine</span>
+    </div>
+
+    <!-- DAW Global Transport -->
+    <div class="global-transport">
+      <button class="transport-btn btn-play-global midi-mappable" id="globalPlayBtn" data-midi-target="global_play" onclick="handlePlayClick(event)" title="Global Play (Spacebar)">
+        ▶
+      </button>
+      <button class="transport-btn btn-stop-global midi-mappable" id="globalStopBtn" data-midi-target="global_stop" onclick="handleStopClick(event)" title="Global Stop: 1x Pause, 2x Rewind">
+        ⏹
+      </button>
+      <span style="font-size: 0.72rem; color: var(--text-muted); margin-left: 4px;">[Space]</span>
+    </div>
+
+    <div class="header-actions">
+      <!-- File Dropdown -->
+      <div class="dropdown-container">
+        <button class="btn-accent" onclick="toggleFileDropdown(event)">📁 File ▾</button>
+        <div class="dropdown-menu" id="fileDropdownMenu">
+          <div class="dropdown-item" onclick="handleNewProjectClick()"><span>📄 New Project</span></div>
+          <div class="dropdown-item" onclick="handleLoadProjectClick()"><span>📂 Open / Load...</span></div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" onclick="saveProject(false)"><span>💾 Save</span> <span style="font-size:0.65rem; color:var(--text-muted);">Ctrl+S</span></div>
+          <div class="dropdown-item" onclick="saveProject(true)"><span>📑 Save As...</span></div>
+        </div>
+      </div>
+
+      <button class="btn-midi" id="midiMapToggleBtn" onclick="toggleMidiMode()" title="MIDI Learn Mapping Mode">🎹 MIDI Map</button>
+      <button onclick="addTrackColumn()">+ Add Track</button>
+      <button onclick="addSceneRow()">+ Add Scene Row</button>
+      <button class="btn-icon-fullscreen" onclick="toggleFullscreen()" title="Fullscreen Mode">
+        <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Middle Matrix View (Synchronized Scroll) -->
+  <main class="session-view">
+    <div class="matrix-board" id="sessionGrid"></div>
+  </main>
+
+  <!-- Bottom Waveform & Properties View -->
+  <footer class="detail-view">
+    <div class="clip-properties">
+      <div>
+        <div class="prop-header">Clip & Loop Properties</div>
+        <div id="noSelectionMsg" style="color: var(--text-muted); font-size: 0.78rem;">
+          Pilih salah satu klip untuk melihat waveform, mengatur volume, gain boost, dan loop marker.
+        </div>
+        <div class="prop-fields" id="propControls" style="display: none;">
+          <div class="prop-row">
+            <label>Name:</label>
+            <span id="propClipName" style="font-weight: 600; max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-</span>
+          </div>
+          <!-- Clip Gain Boost & Auto Maximize -->
+          <div class="prop-row">
+            <label>Clip Gain:</label>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <input type="range" class="prop-gain-slider" id="propGain" min="0" max="12" step="0.5" value="0" oninput="updateGainFromSlider(this.value)">
+              <span id="propGainLabel" style="font-weight: 700; color: var(--gold); min-width: 44px; text-align: right;">0.0 dB</span>
+            </div>
+          </div>
+          <div class="prop-row" style="justify-content: flex-end; margin-top: -2px;">
+            <button style="padding: 2px 7px; font-size: 0.68rem; color: var(--gold); border-color: var(--gold);" onclick="autoMaximizeCurrentClip()" title="Scan peak dan angkat level ke 0 dB secara instan">
+              ⚡ Maximize Peak
+            </button>
+          </div>
+          <div class="prop-row">
+            <label>Loop Start (s):</label>
+            <input type="number" id="propStart" step="0.1" min="0" onchange="updateCueSettingsFromInput()">
+          </div>
+          <div class="prop-row">
+            <label>Loop End (s):</label>
+            <input type="number" id="propEnd" step="0.1" min="0" onchange="updateCueSettingsFromInput()">
+          </div>
+          <div class="prop-row">
+            <label>Loop Playback:</label>
+            <input type="checkbox" id="propLoop" onchange="updateCueSettingsFromInput()">
+          </div>
+          <div style="font-size: 0.68rem; color: var(--gold); margin-top: 4px; line-height: 1.3;">
+            💡 <i>Drag handle hijau/merah di waveform untuk loop. Ketuk canvas di mana saja untuk seek playhead!</i>
+          </div>
+        </div>
+      </div>
+      <div id="relocateWrap" style="display: none;">
+        <button style="width: 100%; color: var(--danger); border-color: var(--danger);" onclick="triggerRelocate()">
+          ⚠️ Locate Missing File
+        </button>
+      </div>
+    </div>
+
+    <!-- Waveform Canvas -->
+    <div class="waveform-stage">
+      <div class="waveform-info-bar">
+        <span id="waveformStatus">Inspecting: None</span>
+        <span id="timecodeDisplay">0.00s / 0.00s</span>
+      </div>
+      <div class="canvas-container" id="canvasWrap">
+        <canvas id="waveformCanvas"></canvas>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Context Menu Dropdown -->
+  <div class="custom-context-menu" id="slotContextMenu">
+    <div class="context-menu-item" onclick="menuActionReplace()">🔄 Ganti Audio</div>
+    <div class="context-menu-item" onclick="menuActionToggleDisable()"><span id="menuDisableText">🚫 Nonaktifkan</span></div>
+    <div class="context-menu-item danger" onclick="menuActionDelete()">🗑 Hapus Audio</div>
+  </div>
+
+  <!-- Custom Modal Popup -->
+  <div class="modal-overlay" id="customModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">⚠️ Media Files Missing</div>
+        <button style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:1rem;" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer" id="modalFooter">
+        <button onclick="closeModal()">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- File Pickers -->
+  <input type="file" id="slotFileInput" accept="audio/*">
+  <input type="file" id="projectFileInput" accept=".json">
+  <input type="file" id="relocateFileInput" accept="audio/*">
+
+  <script>
+    let audioContext = null;
+    const audioBufferCache = new Map();
+
+    const DB_NAME = 'RamatlokaSoraAudioDB';
+    const DB_VERSION = 1;
+    let dbInstance = null;
+
+    function openIndexedDB() {
+      return new Promise((resolve) => {
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains('audioFiles')) {
+            db.createObjectStore('audioFiles');
+          }
+        };
+        req.onsuccess = (e) => {
+          dbInstance = e.target.result;
+          resolve(dbInstance);
+        };
+        req.onerror = () => resolve(null);
+      });
+    }
+
+    async function saveAudioToIDB(fileName, arrayBuffer) {
+      if (!dbInstance) await openIndexedDB();
+      if (!dbInstance) return;
+      const tx = dbInstance.transaction('audioFiles', 'readwrite');
+      tx.objectStore('audioFiles').put(arrayBuffer, fileName);
+    }
+
+    async function loadAudioFromIDB(fileName) {
+      if (!dbInstance) await openIndexedDB();
+      if (!dbInstance) return null;
+      return new Promise((resolve) => {
+        const tx = dbInstance.transaction('audioFiles', 'readonly');
+        const req = tx.objectStore('audioFiles').get(fileName);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => resolve(null);
+      });
+    }
+
+    const defaultProject = {
+      sceneNames: ["Scene 1", "Scene 2", "Scene 3", "Scene 4"],
+      master: { volume: 0.90, pan: 0 },
+      tracks: [
+        { id: 1, name: "Audio 1", volume: 0.85, pan: 0, activeSlotIndex: 0, clips: [null, null, null, null] },
+        { id: 2, name: "Audio 2", volume: 0.85, pan: 0, activeSlotIndex: 0, clips: [null, null, null, null] },
+        { id: 3, name: "SFX / Cue", volume: 0.95, pan: 0, activeSlotIndex: 0, clips: [null, null, null, null] }
+      ],
+      midiBindings: {}
+    };
+
+    let project = JSON.parse(JSON.stringify(defaultProject));
+    let currentFileHandle = null;
+
+    let masterAudioNodes = null;
+    const trackAudioNodes = new Map();
+
+    let selectedClipTarget = null;
+    let targetUploadSlot = null;
+    let draggingHandle = null;
+    let draggedSlotSource = null;
+    let contextMenuTarget = null;
+
+    let isMidiMode = false;
+    let selectedMidiTarget = null;
+    let midiAccess = null;
+    let lastMidiTriggerTime = 0;
+
+    function autoSaveSession() {
+      try {
+        localStorage.setItem('ramatloka_sora_last_session', JSON.stringify(project));
+      } catch (e) {}
+    }
+
+    async function restoreSession() {
+      await openIndexedDB();
+      const saved = localStorage.getItem('ramatloka_sora_last_session');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.tracks) {
+            project = parsed;
+            if (!project.midiBindings) project.midiBindings = {};
+            if (!project.master) project.master = { volume: 0.90, pan: 0 };
+          }
+        } catch (e) {}
+      }
+
+      initAudio();
+      initWebMidi();
+
+      for (const track of project.tracks) {
+        for (const clip of track.clips) {
+          if (clip && clip.fileName && !audioBufferCache.has(clip.fileName)) {
+            const rawBuffer = await loadAudioFromIDB(clip.fileName);
+            if (rawBuffer) {
+              try {
+                const decoded = await audioContext.decodeAudioData(rawBuffer.slice(0));
+                audioBufferCache.set(clip.fileName, decoded);
+              } catch (e) {}
+            }
+          }
+        }
+      }
+
+      renderSessionGrid();
+    }
+
+    function initAudio() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+      initMasterBus();
+    }
+
+    function initMasterBus() {
+      if (!masterAudioNodes && audioContext) {
+        const gainNode = audioContext.createGain();
+        gainNode.gain.value = project.master.volume;
+
+        const panNode = audioContext.createStereoPanner ? audioContext.createStereoPanner() : null;
+        const analyserNode = audioContext.createAnalyser();
+        analyserNode.fftSize = 64;
+
+        if (panNode) {
+          panNode.pan.value = project.master.pan;
+          gainNode.connect(panNode);
+          panNode.connect(analyserNode);
+        } else {
+          gainNode.connect(analyserNode);
+        }
+        analyserNode.connect(audioContext.destination);
+
+        masterAudioNodes = { gainNode, panNode, analyserNode };
+      }
+    }
+
+    function getTrackNodes(track) {
+      initAudio();
+      if (!trackAudioNodes.has(track.id)) {
+        const gainNode = audioContext.createGain();
+        gainNode.gain.value = track.volume;
+
+        const panNode = audioContext.createStereoPanner ? audioContext.createStereoPanner() : null;
+        const analyserNode = audioContext.createAnalyser();
+        analyserNode.fftSize = 64;
+
+        if (panNode) {
+          panNode.pan.value = track.pan;
+          gainNode.connect(panNode);
+          panNode.connect(analyserNode);
+        } else {
+          gainNode.connect(analyserNode);
+        }
+
+        analyserNode.connect(masterAudioNodes.gainNode);
+
+        trackAudioNodes.set(track.id, {
+          gainNode,
+          panNode,
+          analyserNode,
+          sourceNode: null,
+          clipGainNode: null,
+          clip: null,
+          startCtxTime: 0,
+          currentPlayhead: 0,
+          isPlaying: false
+        });
+      }
+      return trackAudioNodes.get(track.id);
+    }
+
+    function isAnyTrackPlaying() {
+      for (const track of project.tracks) {
+        const state = trackAudioNodes.get(track.id);
+        if (state && state.isPlaying) return true;
+      }
+      return false;
+    }
+
+    function updateGlobalTransportUI() {
+      const anyPlaying = isAnyTrackPlaying();
+      const playBtn = document.getElementById('globalPlayBtn');
+      if (anyPlaying) {
+        playBtn.classList.add('active');
+      } else {
+        playBtn.classList.remove('active');
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function initWebMidi() {
+      if (navigator.requestMIDIAccess && !midiAccess) {
+        navigator.requestMIDIAccess().then(onMidiSuccess, () => {
+          console.warn("Web MIDI API tidak diizinkan atau tidak didukung pada browser ini.");
+        });
+      }
+    }
+
+    function onMidiSuccess(access) {
+      midiAccess = access;
+      const inputs = midiAccess.inputs.values();
+      for (const input of inputs) {
+        input.onmidimessage = handleMidiMessage;
+      }
+      midiAccess.onstatechange = (e) => {
+        if (e.port.type === 'input' && e.port.state === 'connected') {
+          e.port.onmidimessage = handleMidiMessage;
+        }
+      };
+    }
+
+    function toggleMidiMode() {
+      initWebMidi();
+      isMidiMode = !isMidiMode;
+      const btn = document.getElementById('midiMapToggleBtn');
+      if (isMidiMode) {
+        btn.classList.add('active');
+        document.body.classList.add('midi-mode-active');
+      } else {
+        btn.classList.remove('active');
+        document.body.classList.remove('midi-mode-active');
+        selectedMidiTarget = null;
+      }
+      renderSessionGrid();
+    }
+
+    function handleMidiTargetClick(targetId) {
+      if (!isMidiMode) return;
+      selectedMidiTarget = targetId;
+      renderSessionGrid();
+    }
+
+    function handlePlayClick(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      if (isMidiMode) {
+        handleMidiTargetClick('global_play');
+      } else {
+        toggleGlobalPlay();
+      }
+    }
+
+    function handleStopClick(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      if (isMidiMode) {
+        handleMidiTargetClick('global_stop');
+      } else {
+        handleGlobalStop();
+      }
+    }
+
+    function toggleGlobalPlay() {
+      if (isMidiMode) return;
+      initAudio();
+
+      if (isAnyTrackPlaying()) {
+        handleGlobalStop();
+      } else {
+        project.tracks.forEach((track, tIdx) => {
+          if (track.activeSlotIndex !== null && track.activeSlotIndex !== undefined) {
+            const sIdx = track.activeSlotIndex;
+            if (track.clips[sIdx] && !track.clips[sIdx].disabled) {
+              startClipPlayback(tIdx, sIdx, true);
+            }
+          }
+        });
+        renderSessionGrid();
+      }
+    }
+
+    function handleMidiMessage(event) {
+      const [status, data1, data2] = event.data;
+      const command = status >> 4;
+      const isCC = (command === 0xB);
+      const isNoteOn = (command === 0x9 && data2 > 0);
+
+      if (isMidiMode && selectedMidiTarget) {
+        if ((selectedMidiTarget.startsWith('track_vol_') || selectedMidiTarget === 'master_vol') && isCC) {
+          project.midiBindings[selectedMidiTarget] = { type: 'cc', number: data1 };
+          selectedMidiTarget = null;
+          autoSaveSession();
+          renderSessionGrid();
+        } else if (selectedMidiTarget.startsWith('global_')) {
+          if (isNoteOn) {
+            project.midiBindings[selectedMidiTarget] = { type: 'note', number: data1 };
+            selectedMidiTarget = null;
+            autoSaveSession();
+            renderSessionGrid();
+          } else if (isCC && data2 > 0) {
+            project.midiBindings[selectedMidiTarget] = { type: 'cc_button', number: data1 };
+            selectedMidiTarget = null;
+            autoSaveSession();
+            renderSessionGrid();
+          }
+        }
+        return;
+      }
+
+      const now = performance.now();
+
+      for (const [targetId, binding] of Object.entries(project.midiBindings)) {
+        if (binding.type === 'cc' && isCC && binding.number === data1) {
+          executeMidiAction(targetId, data2 / 127);
+        } else if (binding.type === 'note' && isNoteOn && binding.number === data1) {
+          if (now - lastMidiTriggerTime > 180) {
+            lastMidiTriggerTime = now;
+            executeMidiAction(targetId, 1);
+          }
+        } else if (binding.type === 'cc_button' && isCC && binding.number === data1) {
+          if (data2 > 64 && (now - lastMidiTriggerTime > 180)) {
+            lastMidiTriggerTime = now;
+            executeMidiAction(targetId, 1);
+          }
+        }
+      }
+    }
+
+    function executeMidiAction(targetId, value) {
+      if (targetId === 'global_play') {
+        toggleGlobalPlay();
+      } else if (targetId === 'global_stop') {
+        handleGlobalStop();
+      } else if (targetId === 'master_vol') {
+        changeMasterVolume(value);
+        const fader = document.querySelector(`input[data-midi-target="master_vol"]`);
+        if (fader) fader.value = value;
+      } else if (targetId.startsWith('track_vol_')) {
+        const trackId = parseInt(targetId.replace('track_vol_', ''));
+        const tIdx = project.tracks.findIndex(t => t.id === trackId);
+        if (tIdx !== -1) {
+          changeVolume(tIdx, value);
+          const fader = document.querySelector(`input[data-midi-target="${targetId}"]`);
+          if (fader) fader.value = value;
+        }
+      }
+    }
+
+    function toggleFileDropdown(e) {
+      e.stopPropagation();
+      document.getElementById('fileDropdownMenu').classList.toggle('show');
+    }
+
+    window.addEventListener('click', () => {
+      const drop = document.getElementById('fileDropdownMenu');
+      if (drop) drop.classList.remove('show');
+    });
+
+    function handleNewProjectClick() {
+      document.getElementById('fileDropdownMenu').classList.remove('show');
+      createNewProject();
+    }
+
+    function handleLoadProjectClick() {
+      document.getElementById('fileDropdownMenu').classList.remove('show');
+      document.getElementById('projectFileInput').click();
+    }
+
+    function createNewProject() {
+      showCustomConfirm("Buat project baru?", "Semua konfigurasi track yang belum disimpan akan dikosongkan.", () => {
+        stopAllTracks();
+        project = JSON.parse(JSON.stringify(defaultProject));
+        currentFileHandle = null;
+        autoSaveSession();
+        selectedClipTarget = null;
+        document.getElementById('noSelectionMsg').style.display = 'block';
+        document.getElementById('propControls').style.display = 'none';
+        renderSessionGrid();
+      });
+    }
+
+    function deleteTrackColumn(tIdx) {
+      const track = project.tracks[tIdx];
+      showCustomConfirm(`Hapus kolom "${track.name}"?`, "Semua klip dan pengaturan pada channel ini akan dihapus permanen.", () => {
+        stopTrackSingle(tIdx);
+        trackAudioNodes.delete(track.id);
+        delete project.midiBindings[`track_vol_${track.id}`];
+        project.tracks.splice(tIdx, 1);
+
+        if (selectedClipTarget && selectedClipTarget.trackIndex === tIdx) {
+          selectedClipTarget = null;
+          document.getElementById('noSelectionMsg').style.display = 'block';
+          document.getElementById('propControls').style.display = 'none';
+        }
+        autoSaveSession();
+        renderSessionGrid();
+      });
+    }
+
+    async function loadAudioFileIntoSlot(file, tIdx, sIdx) {
+      initAudio();
+      const arrayBuffer = await file.arrayBuffer();
+      await saveAudioToIDB(file.name, arrayBuffer);
+
+      const decoded = await audioContext.decodeAudioData(arrayBuffer.slice(0));
+      audioBufferCache.set(file.name, decoded);
+
+      project.tracks[tIdx].clips[sIdx] = {
+        id: 'clip_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+        fileName: file.name,
+        duration: decoded.duration,
+        startTime: 0,
+        endTime: decoded.duration,
+        isLoop: false,
+        disabled: false,
+        gainDb: 0 // Default gain 0 dB
+      };
+    }
+
+    async function handleDroppedFiles(files, startTIdx, startSIdx) {
+      initAudio();
+      const audioFiles = Array.from(files).filter(f => f.type.startsWith('audio/') || /\.(mp3|wav|ogg|m4a|aac|flac)$/i.test(f.name));
+      if (audioFiles.length === 0) return;
+
+      for (let i = 0; i < audioFiles.length; i++) {
+        const file = audioFiles[i];
+        const targetRow = startSIdx + i;
+
+        while (targetRow >= project.sceneNames.length) {
+          addSceneRow();
+        }
+
+        await loadAudioFileIntoSlot(file, startTIdx, targetRow);
+      }
+
+      autoSaveSession();
+      selectClipForInspection(startTIdx, startSIdx);
+      renderSessionGrid();
+    }
+
+    function renderSessionGrid() {
+      const grid = document.getElementById('sessionGrid');
+      grid.innerHTML = '';
+
+      project.tracks.forEach((track, tIdx) => {
+        const col = document.createElement('div');
+        col.className = 'track-column';
+
+        const head = document.createElement('div');
+        head.className = 'track-header';
+        head.innerHTML = `
+          <input type="text" class="track-name-input" value="${track.name}" 
+            onchange="renameTrackDirect(${tIdx}, this.value)" 
+            onkeydown="if(event.key==='Enter') this.blur()" title="Klik untuk me-rename nama track">
+          <div style="display:flex; align-items:center; gap:2px;">
+            <button style="padding: 2px 5px; font-size: 0.65rem;" onclick="stopTrackSingle(${tIdx})" title="Stop Track">⏹</button>
+            <button class="btn-del-track" onclick="deleteTrackColumn(${tIdx})" title="Hapus Track">✕</button>
+          </div>
+        `;
+        col.appendChild(head);
+
+        const slotsCont = document.createElement('div');
+        slotsCont.className = 'slots-scroll-viewport track-slots-sync';
+        slotsCont.dataset.tIdx = tIdx;
+
+        slotsCont.onclick = (e) => {
+          if (e.target === slotsCont) {
+            track.activeSlotIndex = null;
+            if (selectedClipTarget && selectedClipTarget.trackIndex === tIdx) {
+              selectedClipTarget = null;
+              document.getElementById('noSelectionMsg').style.display = 'block';
+              document.getElementById('propControls').style.display = 'none';
+            }
+            autoSaveSession();
+            renderSessionGrid();
+          }
+        };
+
+        track.clips.forEach((clip, sIdx) => {
+          const slot = document.createElement('div');
+          const isSelected = track.activeSlotIndex === sIdx;
+          const isTrackPlaying = trackAudioNodes.get(track.id)?.isPlaying && trackAudioNodes.get(track.id)?.clip === clip;
+
+          slot.draggable = !isMidiMode && !!clip;
+          slot.dataset.tIdx = tIdx;
+          slot.dataset.sIdx = sIdx;
+
+          slot.addEventListener('dragstart', (e) => {
+            draggedSlotSource = { tIdx, sIdx };
+            e.dataTransfer.setData('text/plain', `${tIdx},${sIdx}`);
+          });
+
+          slot.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            slot.classList.add('drag-over');
+          });
+
+          slot.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            slot.classList.remove('drag-over');
+          });
+
+          slot.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            slot.classList.remove('drag-over');
+
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+              await handleDroppedFiles(e.dataTransfer.files, tIdx, sIdx);
+              return;
+            }
+
+            if (draggedSlotSource) {
+              const fromTIdx = draggedSlotSource.tIdx;
+              const fromSIdx = draggedSlotSource.sIdx;
+              const toTIdx = tIdx;
+              const toSIdx = sIdx;
+
+              const temp = project.tracks[toTIdx].clips[toSIdx];
+              project.tracks[toTIdx].clips[toSIdx] = project.tracks[fromTIdx].clips[fromSIdx];
+              project.tracks[fromTIdx].clips[fromSIdx] = temp;
+
+              draggedSlotSource = null;
+              autoSaveSession();
+              selectClipForInspection(toTIdx, toSIdx);
+              renderSessionGrid();
+            }
+          });
+
+          if (clip) {
+            const isMissing = !audioBufferCache.has(clip.fileName);
+            slot.className = `clip-slot ${isSelected ? 'selected' : ''} ${isTrackPlaying ? 'playing' : ''} ${isMissing ? 'missing' : ''} ${clip.disabled ? 'disabled' : ''}`;
+
+            const gainBadge = (clip.gainDb && clip.gainDb > 0) ? ` [+${clip.gainDb.toFixed(1)}dB]` : '';
+
+            slot.innerHTML = `
+              <button class="clip-trigger-btn" onclick="toggleClipPlay(event, ${tIdx}, ${sIdx})">
+                ${isTrackPlaying ? '⏹' : '▶'}
+              </button>
+              <div class="clip-info">
+                <span class="clip-title" title="${clip.fileName}">${clip.fileName}</span>
+                <span class="clip-badge">${clip.disabled ? '🚫 Nonaktif' : (isMissing ? '⚠️ Missing' : (clip.isLoop ? '🔁 ' : '') + clip.duration.toFixed(1) + 's' + gainBadge)}</span>
+              </div>
+              <button class="slot-menu-btn" onclick="openSlotMenu(event, ${tIdx}, ${sIdx})" title="Opsi Slot">⋮</button>
+            `;
+            slot.onclick = (e) => {
+              if (!e.target.classList.contains('slot-menu-btn') && !e.target.classList.contains('clip-trigger-btn')) {
+                selectClipForInspection(tIdx, sIdx);
+              }
+            };
+          } else {
+            slot.className = `clip-slot empty-slot ${isSelected ? 'selected' : ''}`;
+            slot.innerText = '+ Empty Slot';
+            slot.onclick = () => {
+              track.activeSlotIndex = sIdx;
+              openFileForSlot(tIdx, sIdx);
+            };
+          }
+          slotsCont.appendChild(slot);
+        });
+
+        col.appendChild(slotsCont);
+
+        // Track Mixer Strip
+        const volMidiTarget = `track_vol_${track.id}`;
+        const isVolAssigned = !!project.midiBindings[volMidiTarget];
+        const isVolSelected = selectedMidiTarget === volMidiTarget;
+
+        const mixer = document.createElement('div');
+        mixer.className = 'track-mixer';
+        mixer.innerHTML = `
+          <div class="pan-row">
+            <div class="mixer-label-row">
+              <span>PAN</span>
+              <span id="pan-val-${tIdx}">${track.pan === 0 ? 'C' : (track.pan < 0 ? 'L' + Math.round(-track.pan*50) : 'R' + Math.round(track.pan*50))}</span>
+            </div>
+            <input type="range" class="pan-slider" min="-1" max="1" step="0.05" value="${track.pan}" 
+              oninput="changePan(${tIdx}, this.value)">
+          </div>
+
+          <div class="mixer-label-row">
+            <span>VOL</span>
+            <span id="vol-val-${tIdx}">${Math.round(track.volume * 100)}%</span>
+          </div>
+
+          <div class="fader-vu-section">
+            <div class="vertical-fader-wrap">
+              <input type="range" class="vertical-fader midi-mappable ${isVolAssigned ? 'midi-assigned' : ''} ${isVolSelected ? 'midi-selected' : ''}" 
+                data-midi-target="${volMidiTarget}" 
+                min="0" max="1" step="0.01" value="${track.volume}" 
+                onclick="if(isMidiMode) handleMidiTargetClick('${volMidiTarget}')"
+                oninput="changeVolume(${tIdx}, this.value)">
+            </div>
+            <div class="vu-meter-column">
+              <div class="vu-fill" id="vu-fill-${track.id}"></div>
+            </div>
+          </div>
+        `;
+        col.appendChild(mixer);
+
+        grid.appendChild(col);
+      });
+
+      // 2. Render Master Column
+      const masterCol = document.createElement('div');
+      masterCol.className = 'track-column master-column';
+
+      const masterHead = document.createElement('div');
+      masterHead.className = 'track-header';
+      masterHead.innerHTML = `<span style="font-size:0.8rem; font-weight:700; color:var(--text-main); text-transform:uppercase;">Master</span>`;
+      masterCol.appendChild(masterHead);
+
+      const sceneSlotsCont = document.createElement('div');
+      sceneSlotsCont.className = 'slots-scroll-viewport';
+      sceneSlotsCont.id = 'masterScrollMaster';
+
+      project.sceneNames.forEach((name, sIdx) => {
+        const sceneSlot = document.createElement('div');
+        sceneSlot.className = 'scene-slot';
+        sceneSlot.innerHTML = `
+          <button class="clip-trigger-btn" style="color: var(--gold);" onclick="playScene(${sIdx})" title="Play Row ${sIdx + 1}">▶</button>
+          <input type="text" class="scene-title-input" value="${name}" 
+            onchange="renameSceneInline(${sIdx}, this.value)" 
+            onkeydown="if(event.key==='Enter') this.blur()">
+        `;
+        sceneSlotsCont.appendChild(sceneSlot);
+      });
+
+      masterCol.appendChild(sceneSlotsCont);
+
+      const masterVolMidiTarget = 'master_vol';
+      const isMasterVolAssigned = !!project.midiBindings[masterVolMidiTarget];
+      const isMasterVolSelected = selectedMidiTarget === masterVolMidiTarget;
+
+      const masterMixer = document.createElement('div');
+      masterMixer.className = 'track-mixer';
+      masterMixer.innerHTML = `
+        <div class="pan-row">
+          <div class="mixer-label-row">
+            <span style="color:var(--gold); font-weight:700;">MST PAN</span>
+            <span id="master-pan-val">${project.master.pan === 0 ? 'C' : (project.master.pan < 0 ? 'L' + Math.round(-project.master.pan*50) : 'R' + Math.round(project.master.pan*50))}</span>
+          </div>
+          <input type="range" class="pan-slider" min="-1" max="1" step="0.05" value="${project.master.pan}" 
+            oninput="changeMasterPan(this.value)">
+        </div>
+
+        <div class="mixer-label-row">
+          <span style="color:var(--gold); font-weight:700;">MASTER</span>
+          <span id="master-vol-val">${Math.round(project.master.volume * 100)}%</span>
+        </div>
+
+        <div class="fader-vu-section">
+          <div class="vertical-fader-wrap">
+            <input type="range" class="vertical-fader midi-mappable ${isMasterVolAssigned ? 'midi-assigned' : ''} ${isMasterVolSelected ? 'midi-selected' : ''}" 
+              data-midi-target="${masterVolMidiTarget}" 
+              min="0" max="1" step="0.01" value="${project.master.volume}" 
+              onclick="if(isMidiMode) handleMidiTargetClick('${masterVolMidiTarget}')"
+              oninput="changeMasterVolume(this.value)">
+          </div>
+          <div class="vu-meter-column">
+            <div class="vu-fill" id="vu-fill-master"></div>
+          </div>
+        </div>
+      `;
+      masterCol.appendChild(masterMixer);
+
+      grid.appendChild(masterCol);
+
+      bindSynchronizedScroll();
+      updateGlobalTransportUI();
+    }
+
+    function bindSynchronizedScroll() {
+      const masterScroll = document.getElementById('masterScrollMaster');
+      const allSlots = document.querySelectorAll('.track-slots-sync');
+
+      if (!masterScroll) return;
+
+      masterScroll.onscroll = () => {
+        const top = masterScroll.scrollTop;
+        allSlots.forEach(el => {
+          el.scrollTop = top;
+        });
+      };
+
+      allSlots.forEach(el => {
+        el.onwheel = (e) => {
+          masterScroll.scrollTop += e.deltaY;
+          e.preventDefault();
+        };
+      });
+    }
+
+    function renameTrackDirect(tIdx, newName) {
+      project.tracks[tIdx].name = newName.trim() || `Audio ${tIdx + 1}`;
+      autoSaveSession();
+    }
+
+    function renameSceneInline(sIdx, newName) {
+      project.sceneNames[sIdx] = newName.trim() || `Scene ${sIdx + 1}`;
+      autoSaveSession();
+    }
+
+    const contextMenu = document.getElementById('slotContextMenu');
+
+    function openSlotMenu(e, tIdx, sIdx) {
+      e.stopPropagation();
+      contextMenuTarget = { tIdx, sIdx };
+      const clip = project.tracks[tIdx].clips[sIdx];
+      
+      document.getElementById('menuDisableText').innerText = clip.disabled ? '✅ Aktifkan' : '🚫 Nonaktifkan';
+
+      const x = e.clientX;
+      const y = e.clientY;
+      contextMenu.style.left = `${Math.min(window.innerWidth - 160, x)}px`;
+      contextMenu.style.top = `${Math.min(window.innerHeight - 120, y)}px`;
+      contextMenu.style.display = 'block';
+    }
+
+    window.addEventListener('click', () => {
+      contextMenu.style.display = 'none';
+    });
+
+    function menuActionReplace() {
+      if (!contextMenuTarget) return;
+      openFileForSlot(contextMenuTarget.tIdx, contextMenuTarget.sIdx);
+      contextMenu.style.display = 'none';
+    }
+
+    function menuActionToggleDisable() {
+      if (!contextMenuTarget) return;
+      const { tIdx, sIdx } = contextMenuTarget;
+      const clip = project.tracks[tIdx].clips[sIdx];
+      if (clip) {
+        clip.disabled = !clip.disabled;
+        if (clip.disabled) {
+          pauseTrackHold(tIdx);
+        }
+        autoSaveSession();
+        renderSessionGrid();
+      }
+      contextMenu.style.display = 'none';
+    }
+
+    function menuActionDelete() {
+      if (!contextMenuTarget) return;
+      const { tIdx, sIdx } = contextMenuTarget;
+      pauseTrackHold(tIdx);
+      project.tracks[tIdx].clips[sIdx] = null;
+      if (selectedClipTarget && selectedClipTarget.trackIndex === tIdx && selectedClipTarget.slotIndex === sIdx) {
+        selectedClipTarget = null;
+        document.getElementById('noSelectionMsg').style.display = 'block';
+        document.getElementById('propControls').style.display = 'none';
+      }
+      autoSaveSession();
+      renderSessionGrid();
+      contextMenu.style.display = 'none';
+    }
+
+    function showModal(title, bodyHtml, footerHtml) {
+      document.getElementById('modalTitle').innerHTML = title;
+      document.getElementById('modalBody').innerHTML = bodyHtml;
+      if (footerHtml) {
+        document.getElementById('modalFooter').innerHTML = footerHtml;
+      } else {
+        document.getElementById('modalFooter').innerHTML = `<button onclick="closeModal()">Tutup</button>`;
+      }
+      document.getElementById('customModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('customModal').style.display = 'none';
+    }
+
+    function showCustomConfirm(title, message, onConfirm) {
+      showModal(
+        `⚠️ ${title}`,
+        `<p>${message}</p>`,
+        `
+          <button onclick="closeModal()">Batal</button>
+          <button class="btn-accent" id="confirmModalBtn">Lanjutkan</button>
+        `
+      );
+      document.getElementById('confirmModalBtn').onclick = () => {
+        closeModal();
+        onConfirm();
+      };
+    }
+
+    function changeVolume(tIdx, val) {
+      const track = project.tracks[tIdx];
+      track.volume = parseFloat(val);
+      const valEl = document.getElementById(`vol-val-${tIdx}`);
+      if (valEl) valEl.innerText = `${Math.round(track.volume * 100)}%`;
+      const nodes = getTrackNodes(track);
+      if (nodes && nodes.gainNode) {
+        nodes.gainNode.gain.linearRampToValueAtTime(track.volume, audioContext.currentTime + 0.05);
+      }
+      autoSaveSession();
+    }
+
+    function changePan(tIdx, val) {
+      const track = project.tracks[tIdx];
+      track.pan = parseFloat(val);
+      const label = track.pan === 0 ? 'C' : (track.pan < 0 ? 'L' + Math.round(-track.pan*50) : 'R' + Math.round(track.pan*50));
+      document.getElementById(`pan-val-${tIdx}`).innerText = label;
+      const nodes = getTrackNodes(track);
+      if (nodes && nodes.panNode) {
+        nodes.panNode.pan.setValueAtTime(track.pan, audioContext.currentTime);
+      }
+      autoSaveSession();
+    }
+
+    function changeMasterVolume(val) {
+      initAudio();
+      project.master.volume = parseFloat(val);
+      const valEl = document.getElementById('master-vol-val');
+      if (valEl) valEl.innerText = `${Math.round(project.master.volume * 100)}%`;
+      if (masterAudioNodes && masterAudioNodes.gainNode) {
+        masterAudioNodes.gainNode.gain.linearRampToValueAtTime(project.master.volume, audioContext.currentTime + 0.05);
+      }
+      autoSaveSession();
+    }
+
+    function changeMasterPan(val) {
+      initAudio();
+      project.master.pan = parseFloat(val);
+      const label = project.master.pan === 0 ? 'C' : (project.master.pan < 0 ? 'L' + Math.round(-project.master.pan*50) : 'R' + Math.round(project.master.pan*50));
+      const valEl = document.getElementById('master-pan-val');
+      if (valEl) valEl.innerText = label;
+      if (masterAudioNodes && masterAudioNodes.panNode) {
+        masterAudioNodes.panNode.pan.setValueAtTime(project.master.pan, audioContext.currentTime);
+      }
+      autoSaveSession();
+    }
+
+    function updateVUMeters() {
+      project.tracks.forEach(track => {
+        const nodes = trackAudioNodes.get(track.id);
+        const fillEl = document.getElementById(`vu-fill-${track.id}`);
+        if (!fillEl) return;
+
+        if (nodes && nodes.isPlaying && nodes.analyserNode) {
+          const dataArray = new Uint8Array(nodes.analyserNode.frequencyBinCount);
+          nodes.analyserNode.getByteFrequencyData(dataArray);
+
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+          const avg = sum / dataArray.length;
+          const percent = Math.min(100, Math.round((avg / 128) * 100));
+
+          fillEl.style.height = `${percent}%`;
+        } else {
+          fillEl.style.height = '0%';
+        }
+      });
+
+      const masterFillEl = document.getElementById('vu-fill-master');
+      if (masterFillEl && masterAudioNodes && masterAudioNodes.analyserNode && isAnyTrackPlaying()) {
+        const dataArray = new Uint8Array(masterAudioNodes.analyserNode.frequencyBinCount);
+        masterAudioNodes.analyserNode.getByteFrequencyData(dataArray);
+
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+        const avg = sum / dataArray.length;
+        const percent = Math.min(100, Math.round((avg / 128) * 100));
+
+        masterFillEl.style.height = `${percent}%`;
+      } else if (masterFillEl) {
+        masterFillEl.style.height = '0%';
+      }
+
+      requestAnimationFrame(updateVUMeters);
+    }
+    requestAnimationFrame(updateVUMeters);
+
+    // Inspector Waveform & Clip Gain Handlers
+    function selectClipForInspection(tIdx, sIdx) {
+      if (isMidiMode) return;
+      const track = project.tracks[tIdx];
+      track.activeSlotIndex = sIdx;
+      const clip = track.clips[sIdx];
+      if (!clip) {
+        renderSessionGrid();
+        return;
+      }
+
+      selectedClipTarget = { trackIndex: tIdx, slotIndex: sIdx, clip };
+      renderSessionGrid();
+
+      document.getElementById('noSelectionMsg').style.display = 'none';
+      document.getElementById('propControls').style.display = 'flex';
+      document.getElementById('propClipName').innerText = clip.fileName;
+      
+      const currentGain = clip.gainDb || 0;
+      document.getElementById('propGain').value = currentGain;
+      document.getElementById('propGainLabel').innerText = `+${currentGain.toFixed(1)} dB`;
+
+      document.getElementById('propStart').value = clip.startTime.toFixed(2);
+      document.getElementById('propEnd').value = clip.endTime.toFixed(2);
+      document.getElementById('propLoop').checked = clip.isLoop;
+
+      const isMissing = !audioBufferCache.has(clip.fileName);
+      document.getElementById('relocateWrap').style.display = isMissing ? 'block' : 'none';
+      document.getElementById('waveformStatus').innerText = `Inspecting: ${clip.fileName} [${track.name} - Slot ${sIdx+1}]`;
+    }
+
+    function updateGainFromSlider(valDb) {
+      if (!selectedClipTarget || !selectedClipTarget.clip) return;
+      const db = parseFloat(valDb);
+      selectedClipTarget.clip.gainDb = db;
+      document.getElementById('propGainLabel').innerText = `+${db.toFixed(1)} dB`;
+
+      // Jika klip sedang berputar, terapkan perubahan penguatan secara real-time
+      const track = project.tracks[selectedClipTarget.trackIndex];
+      const nodes = trackAudioNodes.get(track.id);
+      if (nodes && nodes.isPlaying && nodes.clip === selectedClipTarget.clip && nodes.clipGainNode) {
+        const linearGain = Math.pow(10, db / 20);
+        nodes.clipGainNode.gain.linearRampToValueAtTime(linearGain, audioContext.currentTime + 0.05);
+      }
+
+      autoSaveSession();
+      renderSessionGrid();
+    }
+
+    function autoMaximizeCurrentClip() {
+      if (!selectedClipTarget || !selectedClipTarget.clip) return;
+      const clip = selectedClipTarget.clip;
+      const buffer = audioBufferCache.get(clip.fileName);
+      if (!buffer) return;
+
+      // Scan peak amplitude gelombang audio
+      let peak = 0;
+      for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+        const data = buffer.getChannelData(channel);
+        for (let i = 0; i < data.length; i += 20) {
+          const val = Math.abs(data[i]);
+          if (val > peak) peak = val;
+        }
+      }
+
+      if (peak <= 0.001) return;
+
+      // Hitung penguatan agar peak menyentuh 0 dB (1.0), dibatasi maksimal +12 dB
+      const targetGain = 1.0 / peak;
+      let calculatedDb = 20 * Math.log10(targetGain);
+      calculatedDb = Math.max(0, Math.min(12, Math.round(calculatedDb * 2) / 2)); // Bulatkan ke kelipatan 0.5 dB
+
+      clip.gainDb = calculatedDb;
+      document.getElementById('propGain').value = calculatedDb;
+      document.getElementById('propGainLabel').innerText = `+${calculatedDb.toFixed(1)} dB`;
+
+      const track = project.tracks[selectedClipTarget.trackIndex];
+      const nodes = trackAudioNodes.get(track.id);
+      if (nodes && nodes.isPlaying && nodes.clip === clip && nodes.clipGainNode) {
+        const linearGain = Math.pow(10, calculatedDb / 20);
+        nodes.clipGainNode.gain.linearRampToValueAtTime(linearGain, audioContext.currentTime + 0.05);
+      }
+
+      autoSaveSession();
+      renderSessionGrid();
+    }
+
+    function updateCueSettingsFromInput() {
+      if (!selectedClipTarget) return;
+      const { clip } = selectedClipTarget;
+      clip.startTime = Math.max(0, parseFloat(document.getElementById('propStart').value) || 0);
+      clip.endTime = Math.min(clip.duration, parseFloat(document.getElementById('propEnd').value) || clip.duration);
+      clip.isLoop = document.getElementById('propLoop').checked;
+      autoSaveSession();
+      renderSessionGrid();
+    }
+
+    // Audio Playback Engine dengan Dukungan Independent Clip Gain
+    function startClipPlayback(tIdx, sIdx, resumeFromCurrent = false, explicitOffset = null) {
+      initAudio();
+      const track = project.tracks[tIdx];
+      track.activeSlotIndex = sIdx;
+      const clip = track.clips[sIdx];
+      if (!clip || clip.disabled) return;
+
+      const nodes = getTrackNodes(track);
+
+      if (nodes.isPlaying && nodes.sourceNode) {
+        try { nodes.sourceNode.stop(); } catch(e){}
+        try { nodes.sourceNode.disconnect(); } catch(e){}
+      }
+      if (nodes.clipGainNode) {
+        try { nodes.clipGainNode.disconnect(); } catch(e){}
+      }
+
+      const buffer = audioBufferCache.get(clip.fileName);
+      if (!buffer) return;
+
+      const source = audioContext.createBufferSource();
+      source.buffer = buffer;
+
+      // Rangkaian: BufferSource -> Clip Gain Node (Penguat Klip Mandiri) -> Track Gain Node
+      const clipGainNode = audioContext.createGain();
+      const gainDb = clip.gainDb || 0;
+      clipGainNode.gain.value = Math.pow(10, gainDb / 20);
+
+      source.connect(clipGainNode);
+      clipGainNode.connect(nodes.gainNode);
+
+      let startPos = clip.startTime;
+      if (explicitOffset !== null) {
+        startPos = explicitOffset;
+        nodes.currentPlayhead = explicitOffset;
+      } else if (resumeFromCurrent && nodes.clip === clip && nodes.currentPlayhead >= clip.startTime && nodes.currentPlayhead < clip.endTime) {
+        startPos = nodes.currentPlayhead;
+      } else {
+        nodes.currentPlayhead = clip.startTime;
+      }
+
+      const remainDuration = Math.max(0.01, clip.endTime - startPos);
+
+      if (clip.isLoop) {
+        source.loop = true;
+        source.loopStart = clip.startTime;
+        source.loopEnd = clip.endTime;
+        source.start(0, startPos);
+      } else {
+        source.start(0, startPos, remainDuration);
+        source.onended = () => {
+          if (nodes.clip === clip && nodes.isPlaying) {
+            nodes.isPlaying = false;
+            nodes.currentPlayhead = clip.startTime;
+            renderSessionGrid();
+          }
+        };
+      }
+
+      nodes.sourceNode = source;
+      nodes.clipGainNode = clipGainNode;
+      nodes.clip = clip;
+      nodes.startCtxTime = audioContext.currentTime;
+      nodes.startOffset = startPos;
+      nodes.isPlaying = true;
+    }
+
+    function pauseTrackHold(tIdx) {
+      const track = project.tracks[tIdx];
+      const nodes = trackAudioNodes.get(track.id);
+      if (nodes && nodes.isPlaying) {
+        const elapsed = audioContext.currentTime - nodes.startCtxTime;
+        const clip = nodes.clip;
+        if (clip) {
+          if (clip.isLoop) {
+            const loopLen = clip.endTime - clip.startTime;
+            nodes.currentPlayhead = clip.startTime + ((nodes.startOffset - clip.startTime + elapsed) % loopLen);
+          } else {
+            nodes.currentPlayhead = Math.min(clip.endTime, nodes.startOffset + elapsed);
+          }
+        }
+        try { nodes.sourceNode.stop(); } catch(e){}
+        try { nodes.sourceNode.disconnect(); } catch(e){}
+        if (nodes.clipGainNode) {
+          try { nodes.clipGainNode.disconnect(); } catch(e){}
+        }
+        nodes.isPlaying = false;
+      }
+    }
+
+    function rewindTrackToStart(tIdx) {
+      const track = project.tracks[tIdx];
+      const nodes = trackAudioNodes.get(track.id);
+      if (nodes) {
+        const activeClip = (track.activeSlotIndex !== null) ? track.clips[track.activeSlotIndex] : nodes.clip;
+        nodes.currentPlayhead = activeClip ? activeClip.startTime : 0;
+      }
+    }
+
+    function stopTrackSingle(tIdx) {
+      const track = project.tracks[tIdx];
+      const nodes = trackAudioNodes.get(track.id);
+      if (nodes && nodes.isPlaying) {
+        pauseTrackHold(tIdx);
+      } else {
+        rewindTrackToStart(tIdx);
+      }
+      renderSessionGrid();
+    }
+
+    function toggleClipPlay(e, tIdx, sIdx) {
+      e.stopPropagation();
+      if (isMidiMode) return;
+      const track = project.tracks[tIdx];
+      const clip = track.clips[sIdx];
+      if (clip && clip.disabled) return;
+
+      const nodes = trackAudioNodes.get(track.id);
+
+      if (nodes && nodes.isPlaying && track.activeSlotIndex === sIdx) {
+        pauseTrackHold(tIdx);
+      } else {
+        startClipPlayback(tIdx, sIdx, true);
+      }
+      renderSessionGrid();
+    }
+
+    function handleGlobalStop() {
+      if (isAnyTrackPlaying()) {
+        project.tracks.forEach((_, tIdx) => pauseTrackHold(tIdx));
+      } else {
+        project.tracks.forEach((_, tIdx) => rewindTrackToStart(tIdx));
+      }
+      renderSessionGrid();
+    }
+
+    function stopAllTracks() {
+      project.tracks.forEach((_, tIdx) => {
+        pauseTrackHold(tIdx);
+        rewindTrackToStart(tIdx);
+      });
+      renderSessionGrid();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        if (e.target.tagName === 'INPUT' || e.target.isContentEditable) return;
+        e.preventDefault();
+        toggleGlobalPlay();
+      }
+      if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+        e.preventDefault();
+        saveProject(false);
+      }
+    });
+
+    function playScene(rowIdx) {
+      initAudio();
+      project.tracks.forEach((track, tIdx) => {
+        track.activeSlotIndex = rowIdx;
+        const clip = track.clips[rowIdx];
+        if (clip && !clip.disabled) {
+          startClipPlayback(tIdx, rowIdx, false);
+        } else {
+          pauseTrackHold(tIdx);
+          rewindTrackToStart(tIdx);
+        }
+      });
+      renderSessionGrid();
+    }
+
+    function openFileForSlot(tIdx, sIdx) {
+      initAudio();
+      targetUploadSlot = { trackIndex: tIdx, slotIndex: sIdx };
+      document.getElementById('slotFileInput').click();
+    }
+
+    document.getElementById('slotFileInput').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file || !targetUploadSlot) return;
+
+      await loadAudioFileIntoSlot(file, targetUploadSlot.trackIndex, targetUploadSlot.slotIndex);
+      autoSaveSession();
+      selectClipForInspection(targetUploadSlot.trackIndex, targetUploadSlot.slotIndex);
+      e.target.value = '';
+    });
+
+    function addTrackColumn() {
+      const newId = project.tracks.length + 1;
+      const rowCount = project.sceneNames.length;
+      project.tracks.push({
+        id: newId,
+        name: `Audio ${newId}`,
+        volume: 0.85,
+        pan: 0,
+        activeSlotIndex: 0,
+        clips: new Array(rowCount).fill(null)
+      });
+      autoSaveSession();
+      renderSessionGrid();
+    }
+
+    function addSceneRow() {
+      const newIndex = project.sceneNames.length + 1;
+      project.sceneNames.push(`Scene ${newIndex}`);
+      project.tracks.forEach(t => t.clips.push(null));
+      autoSaveSession();
+      renderSessionGrid();
+    }
+
+    // Waveform Canvas Rendering & Unified Pointer / Touch Events
+    const canvas = document.getElementById('waveformCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function getCanvasCoordinates(e) {
+      const rect = canvas.getBoundingClientRect();
+      let clientX = e.clientX;
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+      }
+      return Math.max(0, Math.min(canvas.width, clientX - rect.left));
+    }
+
+    function handlePointerDown(e) {
+      if (!selectedClipTarget || !selectedClipTarget.clip) return;
+      const { clip, trackIndex } = selectedClipTarget;
+      const clickX = getCanvasCoordinates(e);
+      const startX = (clip.startTime / clip.duration) * canvas.width;
+      const endX = (clip.endTime / clip.duration) * canvas.width;
+
+      if (Math.abs(clickX - startX) <= 16) {
+        draggingHandle = 'start';
+      } else if (Math.abs(clickX - endX) <= 16) {
+        draggingHandle = 'end';
+      } else {
+        const seekTime = (clickX / canvas.width) * clip.duration;
+        const boundedSeekTime = Math.max(0, Math.min(clip.duration, seekTime));
+        
+        const track = project.tracks[trackIndex];
+        const nodes = trackAudioNodes.get(track.id);
+
+        if (nodes && nodes.isPlaying && nodes.clip === clip) {
+          startClipPlayback(trackIndex, selectedClipTarget.slotIndex, false, boundedSeekTime);
+        } else if (nodes) {
+          nodes.currentPlayhead = boundedSeekTime;
+        }
+      }
+    }
+
+    function handlePointerMove(e) {
+      if (!draggingHandle || !selectedClipTarget) return;
+      const { clip } = selectedClipTarget;
+      const x = getCanvasCoordinates(e);
+      const newTime = (x / canvas.width) * clip.duration;
+
+      if (draggingHandle === 'start') {
+        clip.startTime = Math.min(newTime, clip.endTime - 0.2);
+        document.getElementById('propStart').value = clip.startTime.toFixed(2);
+      } else if (draggingHandle === 'end') {
+        clip.endTime = Math.max(newTime, clip.startTime + 0.2);
+        document.getElementById('propEnd').value = clip.endTime.toFixed(2);
+      }
+    }
+
+    function handlePointerUp() {
+      if (draggingHandle) {
+        draggingHandle = null;
+        autoSaveSession();
+        renderSessionGrid();
+      }
+    }
+
+    canvas.addEventListener('mousedown', handlePointerDown);
+    window.addEventListener('mousemove', handlePointerMove);
+    window.addEventListener('mouseup', handlePointerUp);
+
+    canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      handlePointerDown(e);
+    }, { passive: false });
+
+    window.addEventListener('touchmove', (e) => {
+      if (draggingHandle) {
+        e.preventDefault();
+        handlePointerMove(e);
+      }
+    }, { passive: false });
+
+    window.addEventListener('touchend', handlePointerUp);
+    window.addEventListener('touchcancel', handlePointerUp);
+
+    function drawWaveformStage() {
+      const wrap = document.getElementById('canvasWrap');
+      if (canvas.width !== wrap.clientWidth || canvas.height !== wrap.clientHeight) {
+        canvas.width = wrap.clientWidth;
+        canvas.height = wrap.clientHeight;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (selectedClipTarget && selectedClipTarget.clip) {
+        const { clip, trackIndex } = selectedClipTarget;
+        const buffer = audioBufferCache.get(clip.fileName);
+
+        if (buffer) {
+          const data = buffer.getChannelData(0);
+          const step = Math.ceil(data.length / canvas.width);
+          const amp = canvas.height / 2;
+
+          ctx.fillStyle = '#b88f28';
+          for (let i = 0; i < canvas.width; i++) {
+            let min = 1.0;
+            let max = -1.0;
+            for (let j = 0; j < step; j++) {
+              const datum = data[(i * step) + j];
+              if (datum < min) min = datum;
+              if (datum > max) max = datum;
+            }
+            ctx.fillRect(i, (1 + min) * amp, 1, Math.max(1, (max - min) * amp));
+          }
+
+          const startX = (clip.startTime / clip.duration) * canvas.width;
+          const endX = (clip.endTime / clip.duration) * canvas.width;
+
+          ctx.fillStyle = 'rgba(227, 179, 65, 0.15)';
+          ctx.fillRect(startX, 0, endX - startX, canvas.height);
+
+          // Handle Start (Hijau)
+          ctx.strokeStyle = '#2ea043';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(startX, 0);
+          ctx.lineTo(startX, canvas.height);
+          ctx.stroke();
+
+          ctx.fillStyle = '#2ea043';
+          ctx.fillRect(startX - 6, 0, 12, 20);
+
+          // Handle End (Merah)
+          ctx.strokeStyle = '#f85149';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(endX, 0);
+          ctx.lineTo(endX, canvas.height);
+          ctx.stroke();
+
+          ctx.fillStyle = '#f85149';
+          ctx.fillRect(endX - 6, canvas.height - 20, 12, 20);
+
+          // Playhead
+          const track = project.tracks[trackIndex];
+          const nodes = trackAudioNodes.get(track.id);
+
+          let cur = 0;
+          if (nodes && nodes.clip === clip) {
+            if (nodes.isPlaying) {
+              const elapsed = audioContext.currentTime - nodes.startCtxTime;
+              cur = nodes.startOffset + elapsed;
+              if (clip.isLoop) {
+                const len = clip.endTime - clip.startTime;
+                if (len > 0) cur = clip.startTime + ((nodes.startOffset - clip.startTime + elapsed) % len);
+              }
+            } else {
+              cur = nodes.currentPlayhead || clip.startTime;
+            }
+
+            const playX = (cur / clip.duration) * canvas.width;
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(playX, 0);
+            ctx.lineTo(playX, canvas.height);
+            ctx.stroke();
+
+            document.getElementById('timecodeDisplay').innerText = `${cur.toFixed(2)}s / ${clip.duration.toFixed(2)}s`;
+          } else {
+            document.getElementById('timecodeDisplay').innerText = `0.00s / ${clip.duration.toFixed(2)}s`;
+          }
+        }
+      }
+
+      requestAnimationFrame(drawWaveformStage);
+    }
+    requestAnimationFrame(drawWaveformStage);
+
+    // Save & Save As Management
+    async function saveProject(forceSaveAs = false) {
+      document.getElementById('fileDropdownMenu').classList.remove('show');
+
+      const exportData = {
+        appName: 'Ramatloka Sora',
+        version: '1.5',
+        exportedAt: new Date().toISOString(),
+        sceneNames: project.sceneNames,
+        master: project.master,
+        tracks: project.tracks,
+        midiBindings: project.midiBindings || {}
+      };
+      const jsonStr = JSON.stringify(exportData, null, 2);
+
+      if (window.showSaveFilePicker) {
+        try {
+          if (!currentFileHandle || forceSaveAs) {
+            currentFileHandle = await window.showSaveFilePicker({
+              suggestedName: 'ramatloka-sora-session.json',
+              types: [{
+                description: 'JSON Project File',
+                accept: { 'application/json': ['.json'] }
+              }]
+            });
+          }
+          const writable = await currentFileHandle.createWritable();
+          await writable.write(jsonStr);
+          await writable.close();
+          autoSaveSession();
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+        }
+      }
+
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `ramatloka-sora-session${forceSaveAs ? '-as' : ''}.json`;
+      a.click();
+      autoSaveSession();
+    }
+
+    // Load Project JSON
+    document.getElementById('projectFileInput').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        const data = JSON.parse(await file.text());
+        if (data.tracks) {
+          stopAllTracks();
+          project.tracks = data.tracks;
+          project.sceneNames = data.sceneNames || project.sceneNames;
+          project.master = data.master || { volume: 0.90, pan: 0 };
+          project.midiBindings = data.midiBindings || {};
+
+          initAudio();
+          initWebMidi();
+
+          if (masterAudioNodes) {
+            masterAudioNodes.gainNode.gain.value = project.master.volume;
+            if (masterAudioNodes.panNode) masterAudioNodes.panNode.pan.value = project.master.pan;
+          }
+
+          for (const track of project.tracks) {
+            for (const clip of track.clips) {
+              if (clip && !audioBufferCache.has(clip.fileName)) {
+                const rawBuffer = await loadAudioFromIDB(clip.fileName);
+                if (rawBuffer) {
+                  try {
+                    const decoded = await audioContext.decodeAudioData(rawBuffer.slice(0));
+                    audioBufferCache.set(clip.fileName, decoded);
+                  } catch (e) {}
+                }
+              }
+            }
+          }
+
+          selectedClipTarget = null;
+          autoSaveSession();
+          renderSessionGrid();
+
+          const missingFiles = [];
+          project.tracks.forEach(track => {
+            track.clips.forEach(clip => {
+              if (clip && !audioBufferCache.has(clip.fileName)) {
+                if (!missingFiles.includes(clip.fileName)) {
+                  missingFiles.push(clip.fileName);
+                }
+              }
+            });
+          });
+
+          if (missingFiles.length > 0) {
+            const listHtml = `
+              <p>Project berhasil dimuat, namun ditemukan <b>${missingFiles.length} file audio</b> yang belum berada di memori perangkat ini:</p>
+              <ul class="missing-file-list">
+                ${missingFiles.map(name => `<li class="missing-file-item"><span>📁 ${name}</span><span style="color:var(--danger)">Offline</span></li>`).join('')}
+              </ul>
+              <p style="margin-top:12px; font-size:0.75rem;">Silakan klik tombol <b>Locate Missing File</b> di panel bawah untuk memuat file audio.</p>
+            `;
+            showModal("⚠️ Media Files Missing", listHtml);
+          }
+        }
+      } catch (err) {
+        showModal("❌ Kesalahan Format", `<p>File JSON yang Anda pilih rusak atau tidak didukung.</p>`);
+      }
+      e.target.value = '';
+    });
+
+    function triggerRelocate() {
+      document.getElementById('relocateFileInput').click();
+    }
+
+    document.getElementById('relocateFileInput').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file || !selectedClipTarget) return;
+
+      initAudio();
+      const arrayBuffer = await file.arrayBuffer();
+      await saveAudioToIDB(selectedClipTarget.clip.fileName, arrayBuffer);
+
+      const decoded = await audioContext.decodeAudioData(arrayBuffer.slice(0));
+      audioBufferCache.set(selectedClipTarget.clip.fileName, decoded);
+      
+      selectClipForInspection(selectedClipTarget.trackIndex, selectedClipTarget.slotIndex);
+      e.target.value = '';
+    });
+
+    restoreSession();
+  // Pendaftaran Service Worker PWA
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Service Worker PWA aktif:', reg.scope))
+        .catch(err => console.warn('Service Worker PWA gagal:', err));
+    });
+  }
+  </script>
+</body>
+</html>
