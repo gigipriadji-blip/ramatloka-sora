@@ -75,6 +75,34 @@
       text-transform: uppercase;
     }
 
+    /* Project Title Pill Badge */
+    .project-name-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #0d1117;
+      border: 1px solid #303742;
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 0.75rem;
+      color: var(--text-main);
+      cursor: pointer;
+      max-width: 230px;
+      transition: border-color 0.15s;
+    }
+
+    .project-name-badge:hover {
+      border-color: var(--gold);
+    }
+
+    .project-name-text {
+      color: var(--gold);
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     .global-transport {
       display: flex;
       align-items: center;
@@ -138,7 +166,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-width: 135px;
+      min-width: 155px;
       font-family: "Courier New", Courier, monospace;
     }
 
@@ -146,7 +174,7 @@
       font-size: 0.92rem;
       font-weight: 700;
       color: var(--green-bright);
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
 
     .timecode-lcd-sub {
@@ -442,12 +470,13 @@
       border-radius: 3px;
     }
 
-    /* Clip Slot */
+    /* Clip Slot (Ableton Style Color Coding Support) */
     .clip-slot {
       height: 48px;
       min-height: 48px;
       background-color: var(--bg-slot);
       border: 1px solid var(--border);
+      border-left: 4px solid var(--border);
       border-radius: 4px;
       display: flex;
       align-items: center;
@@ -456,7 +485,7 @@
       cursor: pointer;
       position: relative;
       flex-shrink: 0;
-      transition: background-color 0.1s, border-color 0.1s;
+      transition: background-color 0.12s, border-color 0.12s;
     }
 
     .clip-slot:hover {
@@ -466,12 +495,13 @@
 
     .clip-slot.selected {
       border: 1.5px solid var(--gold) !important;
+      border-left: 5px solid var(--gold) !important;
       box-shadow: 0 0 6px rgba(227, 179, 65, 0.4);
     }
 
     .clip-slot.playing {
-      background-color: #173322;
-      border-color: var(--green);
+      background-color: #173322 !important;
+      border-color: var(--green) !important;
     }
 
     .clip-slot.disabled {
@@ -518,6 +548,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
     }
 
     .clip-badge {
@@ -531,16 +562,17 @@
     }
 
     .empty-slot {
-      border: 1px dashed #303742;
-      background: transparent;
+      border: 1px dashed #303742 !important;
+      border-left: 1px dashed #303742 !important;
+      background: transparent !important;
       justify-content: center;
       color: #57606a;
       font-size: 0.72rem;
     }
 
     .empty-slot:hover {
-      border-color: var(--border);
-      background-color: rgba(255, 255, 255, 0.02);
+      border-color: var(--border) !important;
+      background-color: rgba(255, 255, 255, 0.02) !important;
       color: var(--text-muted);
     }
 
@@ -564,12 +596,14 @@
       min-height: 48px;
       background-color: #21262d;
       border: 1px solid #30363d;
+      border-left: 4px solid #444c56;
       border-radius: 4px;
       display: flex;
       align-items: center;
-      padding: 4px 8px;
-      gap: 8px;
+      padding: 4px 6px;
+      gap: 6px;
       flex-shrink: 0;
+      transition: background-color 0.12s, border-color 0.12s;
     }
 
     .scene-title-input {
@@ -579,9 +613,10 @@
       font-size: 0.75rem;
       font-weight: 600;
       outline: none;
-      width: 95px;
+      width: 78px;
       padding: 2px 4px;
       border-radius: 3px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
     }
 
     .scene-title-input:focus {
@@ -915,7 +950,7 @@
       border-radius: 6px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
       z-index: 1000;
-      min-width: 150px;
+      min-width: 165px;
       padding: 4px 0;
     }
 
@@ -936,6 +971,47 @@
 
     .context-menu-item.danger:hover {
       color: var(--danger);
+    }
+
+    /* Color Palette Picker Popover */
+    .color-picker-popover {
+      position: fixed;
+      display: none;
+      background: #19202a;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.85);
+      z-index: 1100;
+      padding: 8px;
+      gap: 6px;
+      grid-template-columns: repeat(4, 26px);
+    }
+
+    .color-swatch-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.25);
+      cursor: pointer;
+      transition: transform 0.1s, border-color 0.1s;
+    }
+
+    .color-swatch-btn:hover {
+      transform: scale(1.15);
+      border-color: #fff;
+    }
+
+    .color-swatch-reset {
+      grid-column: span 4;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 4px 0 2px 0;
+      cursor: pointer;
+    }
+
+    .color-swatch-reset:hover {
+      color: var(--gold);
     }
 
     /* Floating Toast HUD Notification System */
@@ -1176,7 +1252,6 @@
       background: #26354a !important;
     }
 
-    /* Active Highlight Indicator in Modal Table */
     .vmix-queue-row.active-playing {
       background: #133a22 !important;
       color: #fff;
@@ -1256,7 +1331,12 @@
   <header>
     <div class="brand-group">
       <span class="brand-title">Ramatloka Sora</span>
-      <span style="font-size: 0.75rem; color: var(--text-muted);">| Cue Matrix Engine</span>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">|</span>
+      <!-- Project Name Active Display -->
+      <div class="project-name-badge" onclick="renameCurrentProjectPrompt()" title="Klik untuk mengubah nama project ini">
+        <span>📁</span>
+        <span class="project-name-text" id="activeProjectTitle">Untitled Session</span>
+      </div>
     </div>
 
     <!-- DAW Global Transport & Digital Timer HUD -->
@@ -1271,10 +1351,10 @@
         ⏹
       </button>
 
-      <!-- Digital Timer LCD HUD -->
+      <!-- Digital Timer LCD HUD (Elapsed / Remaining) -->
       <div class="timecode-lcd">
-        <span class="timecode-lcd-main" id="globalTimerLcd">00:00.0</span>
-        <span class="timecode-lcd-sub" id="globalTimerSub">MATRIX MODE</span>
+        <span class="timecode-lcd-main" id="globalTimerLcd">00:00.0 / -00:00.0</span>
+        <span class="timecode-lcd-sub" id="globalTimerSub">MATRIX STANDBY</span>
       </div>
     </div>
 
@@ -1382,7 +1462,7 @@
     <div class="waveform-stage">
       <div class="waveform-info-bar">
         <span id="waveformStatus">Inspecting: None</span>
-        <span id="timecodeDisplay">0.00s / 0.00s</span>
+        <span id="timecodeDisplay">0.00s / 0.00s (Sisa: -0.00s)</span>
       </div>
       <div class="canvas-container" id="canvasWrap">
         <canvas id="waveformCanvas"></canvas>
@@ -1393,8 +1473,28 @@
   <!-- Context Menu Dropdown -->
   <div class="custom-context-menu" id="slotContextMenu">
     <div class="context-menu-item" onclick="menuActionReplace()">🔄 Ganti Audio</div>
+    <div class="context-menu-item" onclick="menuActionColorPicker(event)">🎨 Pilih Warna Slot</div>
     <div class="context-menu-item" onclick="menuActionToggleDisable()"><span id="menuDisableText">🚫 Nonaktifkan</span></div>
     <div class="context-menu-item danger" onclick="menuActionDelete()">🗑 Hapus Audio</div>
+  </div>
+
+  <!-- Scene Row Context Menu -->
+  <div class="custom-context-menu" id="sceneContextMenu">
+    <div class="context-menu-item" onclick="sceneActionColorPicker(event)">🎨 Warna Scene</div>
+    <div class="context-menu-item" onclick="sceneActionRename()">✏️ Rename Scene</div>
+  </div>
+
+  <!-- Template Color Swatch Popover (Ableton Style Presets) -->
+  <div class="color-picker-popover" id="colorPickerPopover">
+    <div class="color-swatch-btn" style="background:#e03131;" onclick="applyColorChoice('#e03131')" title="Red"></div>
+    <div class="color-swatch-btn" style="background:#f76707;" onclick="applyColorChoice('#f76707')" title="Orange"></div>
+    <div class="color-swatch-btn" style="background:#f59f00;" onclick="applyColorChoice('#f59f00')" title="Amber / Gold"></div>
+    <div class="color-swatch-btn" style="background:#2f9e44;" onclick="applyColorChoice('#2f9e44')" title="Green"></div>
+    <div class="color-swatch-btn" style="background:#0ca678;" onclick="applyColorChoice('#0ca678')" title="Teal"></div>
+    <div class="color-swatch-btn" style="background:#1098ad;" onclick="applyColorChoice('#1098ad')" title="Cyan"></div>
+    <div class="color-swatch-btn" style="background:#3b5bdb;" onclick="applyColorChoice('#3b5bdb')" title="Blue"></div>
+    <div class="color-swatch-btn" style="background:#9c36b5;" onclick="applyColorChoice('#9c36b5')" title="Purple"></div>
+    <div class="color-swatch-reset" onclick="applyColorChoice(null)">↺ Reset Default</div>
   </div>
 
   <!-- Custom Generic Modal Popup -->
@@ -1488,7 +1588,7 @@
       </div>
       <div class="modal-body" style="padding: 14px 18px;">
         <label id="promptMsg" style="font-size:0.78rem; color:var(--text-main); display:block; margin-bottom:8px;"></label>
-        <input type="text" id="promptInput" maxlength="10" style="width:100%; background:#090c10; border:1px solid var(--border); color:var(--gold); font-weight:bold; padding:6px 10px; border-radius:4px; font-size:0.85rem; outline:none;">
+        <input type="text" id="promptInput" style="width:100%; background:#090c10; border:1px solid var(--border); color:var(--gold); font-weight:bold; padding:6px 10px; border-radius:4px; font-size:0.85rem; outline:none;">
       </div>
       <div class="modal-footer">
         <button onclick="closePromptModal(false)">Batal</button>
@@ -1545,8 +1645,11 @@
       });
     }
 
+    // Default Project Model
     const defaultProject = {
+      projectName: "Untitled Session",
       sceneNames: ["Scene 1", "Scene 2", "Scene 3", "Scene 4"],
+      sceneColors: [null, null, null, null],
       master: { volume: 0.90, pan: 0 },
       tracks: [
         { id: 1, name: "Audio 1", volume: 0.85, pan: 0, activeSlotIndex: 0, clips: [null, null, null, null] },
@@ -1573,13 +1676,13 @@
     let draggingHandle = null;
     let draggedSlotSource = null;
     let contextMenuTarget = null;
+    let activeColorTarget = null; // { type: 'clip' | 'scene', tIdx, sIdx }
 
     let isMidiMode = false;
     let selectedMidiTarget = null;
     let midiAccess = null;
     let lastMidiTriggerTime = 0;
 
-    // Arsitektur Playlist & Playback State
     let isPlaylistModeActive = false;
     let playlistState = {
       isRunning: false,
@@ -1592,7 +1695,6 @@
       delayInterval: null
     };
 
-    // Format Digital Waktu (MM:SS.s)
     function formatTimecode(seconds) {
       if (isNaN(seconds) || seconds < 0) seconds = 0;
       const m = Math.floor(seconds / 60);
@@ -1601,7 +1703,6 @@
       return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${tenths}`;
     }
 
-    // Toast HUD System
     function showToast(title, desc, type = 'midi') {
       const cont = document.getElementById('toastContainer');
       const toast = document.createElement('div');
@@ -1628,7 +1729,6 @@
       }, 3500);
     }
 
-    // Modal Handlers
     function showModal(title, bodyHtml, footerHtml) {
       document.getElementById('modalTitle').innerHTML = title;
       document.getElementById('modalBody').innerHTML = bodyHtml;
@@ -1659,12 +1759,12 @@
       };
     }
 
-    // Custom Prompt Dialog
     let promptCallback = null;
-    function openPromptModal(title, msg, defaultVal, callback) {
+    function openPromptModal(title, msg, defaultVal, callback, maxLen = 40) {
       document.getElementById('promptTitle').innerText = title;
       document.getElementById('promptMsg').innerText = msg;
       const input = document.getElementById('promptInput');
+      input.maxLength = maxLen;
       input.value = defaultVal || '';
       promptCallback = callback;
       document.getElementById('promptModal').style.display = 'flex';
@@ -1683,6 +1783,24 @@
       promptCallback = null;
     }
 
+    function updateProjectTitleDisplay() {
+      const el = document.getElementById('activeProjectTitle');
+      if (el) {
+        el.innerText = project.projectName || "Untitled Session";
+      }
+    }
+
+    function renameCurrentProjectPrompt() {
+      openPromptModal("Rename Project", "Masukkan nama project / show:", project.projectName || "Untitled Session", (val) => {
+        if (val && val.trim() !== '') {
+          project.projectName = val.trim();
+          updateProjectTitleDisplay();
+          autoSaveSession();
+          showToast("Project Renamed", `Nama project diubah menjadi "${project.projectName}"`, "playlist");
+        }
+      }, 50);
+    }
+
     function autoSaveSession() {
       try {
         localStorage.setItem('ramatloka_sora_last_session', JSON.stringify(project));
@@ -1697,6 +1815,8 @@
           const parsed = JSON.parse(saved);
           if (parsed && parsed.tracks) {
             project = parsed;
+            if (!project.projectName) project.projectName = "Untitled Session";
+            if (!project.sceneColors) project.sceneColors = new Array(project.sceneNames.length).fill(null);
             if (!project.midiBindings) project.midiBindings = {};
             if (!project.master) project.master = { volume: 0.90, pan: 0 };
             if (!project.playlist) project.playlist = { items: [], loop: false, manual: false, beginSelected: false };
@@ -1726,6 +1846,7 @@
         }
       }
 
+      updateProjectTitleDisplay();
       renderSessionGrid();
     }
 
@@ -1804,108 +1925,105 @@
       return false;
     }
 
-    // Memperbarui UI Transport & LCD Digital Timer secara Realtime
+    // Update UI Transport & LCD Digital Timer Realtime
     function updateGlobalTransportUI() {
-  const anyPlaying = isAnyTrackPlaying();
-  const playBtn = document.getElementById('globalPlayBtn');
-  const pauseBtn = document.getElementById('globalPauseBtn');
-  const pToggle = document.getElementById('playlistToggleBtn');
+      const anyPlaying = isAnyTrackPlaying();
+      const playBtn = document.getElementById('globalPlayBtn');
+      const pauseBtn = document.getElementById('globalPauseBtn');
+      const pToggle = document.getElementById('playlistToggleBtn');
 
-  if (playBtn) {
-    if (anyPlaying) {
-      playBtn.classList.add('active');
-      if (pauseBtn) pauseBtn.classList.remove('active');
-    } else {
-      playBtn.classList.remove('active');
-    }
-  }
-
-  if (pauseBtn) {
-    if (playlistState.isPaused) {
-      pauseBtn.classList.add('active');
-    } else {
-      pauseBtn.classList.remove('active');
-    }
-  }
-
-  if (pToggle) {
-    if (isPlaylistModeActive) {
-      pToggle.classList.add('mode-active');
-    } else {
-      pToggle.classList.remove('mode-active');
-    }
-  }
-
-  // Display LCD Timer Header
-  const timerMain = document.getElementById('globalTimerLcd');
-  const timerSub = document.getElementById('globalTimerSub');
-
-  if (isPlaylistModeActive) {
-    const items = project.playlist.items;
-    const total = items.length;
-    const curIdx = playlistState.currentIndex;
-
-    if (playlistState.delayRemaining > 0) {
-      timerMain.innerText = `00:${playlistState.delayRemaining.toString().padStart(2, '0')}.0`;
-      timerSub.innerText = `DELAY [NEXT #${curIdx + 2}]`;
-      timerMain.style.color = 'var(--gold)';
-    } else if (curIdx >= 0 && curIdx < total) {
-      const item = items[curIdx];
-      const track = project.tracks[item.trackIndex];
-      const nodes = trackAudioNodes.get(track?.id);
-
-      if (nodes && nodes.clip) {
-        let cur = 0;
-        if (nodes.isPlaying) {
-          const elapsed = audioContext.currentTime - nodes.startCtxTime;
-          cur = nodes.startOffset + elapsed;
+      if (playBtn) {
+        if (anyPlaying) {
+          playBtn.classList.add('active');
+          if (pauseBtn) pauseBtn.classList.remove('active');
         } else {
-          cur = nodes.currentPlayhead || item.startIn;
-        }
-        const effectiveEnd = item.endOut || nodes.clip.duration;
-        const remain = Math.max(0, effectiveEnd - cur);
-
-        // Menampilkan Elapsed dan Sisa Waktu di LCD
-        timerMain.innerText = `${formatTimecode(cur)} / -${formatTimecode(remain)}`;
-        timerSub.innerText = `PL [${curIdx + 1}/${total}] ${item.fileName.substring(0, 10)}`;
-        timerMain.style.color = 'var(--green-bright)';
-      }
-    } else {
-      timerMain.innerText = '00:00.0';
-      timerSub.innerText = `PLAYLIST READY (${total} ITEMS)`;
-      timerMain.style.color = 'var(--text-main)';
-    }
-  } else {
-    // Mode Matrix Normal
-    let maxCur = 0;
-    let maxDur = 0;
-    let activeName = '';
-
-    project.tracks.forEach(track => {
-      const nodes = trackAudioNodes.get(track.id);
-      if (nodes && nodes.isPlaying && nodes.clip) {
-        const elapsed = audioContext.currentTime - nodes.startCtxTime;
-        const cur = nodes.startOffset + elapsed;
-        if (cur > maxCur) {
-          maxCur = cur;
-          maxDur = nodes.clip.duration;
-          activeName = track.name;
+          playBtn.classList.remove('active');
         }
       }
-    });
 
-    if (maxCur > 0) {
-      const remain = Math.max(0, maxDur - maxCur);
-      timerMain.innerText = `${formatTimecode(maxCur)} / -${formatTimecode(remain)}`;
-      timerSub.innerText = `MATRIX: ${activeName}`;
-      timerMain.style.color = 'var(--green-bright)';
-    } else {
-      timerMain.innerText = '00:00.0';
-      timerSub.innerText = 'MATRIX STANDBY';
-      timerMain.style.color = 'var(--text-muted)';
+      if (pauseBtn) {
+        if (playlistState.isPaused) {
+          pauseBtn.classList.add('active');
+        } else {
+          pauseBtn.classList.remove('active');
+        }
+      }
+
+      if (pToggle) {
+        if (isPlaylistModeActive) {
+          pToggle.classList.add('mode-active');
+        } else {
+          pToggle.classList.remove('mode-active');
+        }
+      }
+
+      const timerMain = document.getElementById('globalTimerLcd');
+      const timerSub = document.getElementById('globalTimerSub');
+
+      if (isPlaylistModeActive) {
+        const items = project.playlist.items;
+        const total = items.length;
+        const curIdx = playlistState.currentIndex;
+
+        if (playlistState.delayRemaining > 0) {
+          timerMain.innerText = `00:${playlistState.delayRemaining.toString().padStart(2, '0')}.0 / -00:00.0`;
+          timerSub.innerText = `DELAY [NEXT #${curIdx + 2}]`;
+          timerMain.style.color = 'var(--gold)';
+        } else if (curIdx >= 0 && curIdx < total) {
+          const item = items[curIdx];
+          const track = project.tracks[item.trackIndex];
+          const nodes = trackAudioNodes.get(track?.id);
+
+          if (nodes && nodes.clip) {
+            let cur = 0;
+            if (nodes.isPlaying) {
+              const elapsed = audioContext.currentTime - nodes.startCtxTime;
+              cur = nodes.startOffset + elapsed;
+            } else {
+              cur = nodes.currentPlayhead || item.startIn;
+            }
+            const effectiveEnd = item.endOut || nodes.clip.duration;
+            const remain = Math.max(0, effectiveEnd - cur);
+
+            timerMain.innerText = `${formatTimecode(cur)} / -${formatTimecode(remain)}`;
+            timerSub.innerText = `PL [${curIdx + 1}/${total}] ${item.fileName.substring(0, 10)}`;
+            timerMain.style.color = 'var(--green-bright)';
+          }
+        } else {
+          timerMain.innerText = '00:00.0 / -00:00.0';
+          timerSub.innerText = `PLAYLIST READY (${total} ITEMS)`;
+          timerMain.style.color = 'var(--text-main)';
+        }
+      } else {
+        let maxCur = 0;
+        let maxDur = 0;
+        let activeName = '';
+
+        project.tracks.forEach(track => {
+          const nodes = trackAudioNodes.get(track.id);
+          if (nodes && nodes.isPlaying && nodes.clip) {
+            const elapsed = audioContext.currentTime - nodes.startCtxTime;
+            const cur = nodes.startOffset + elapsed;
+            if (cur > maxCur) {
+              maxCur = cur;
+              maxDur = nodes.clip.duration;
+              activeName = track.name;
+            }
+          }
+        });
+
+        if (maxCur > 0) {
+          const remain = Math.max(0, maxDur - maxCur);
+          timerMain.innerText = `${formatTimecode(maxCur)} / -${formatTimecode(remain)}`;
+          timerSub.innerText = `MATRIX: ${activeName}`;
+          timerMain.style.color = 'var(--green-bright)';
+        } else {
+          timerMain.innerText = '00:00.0 / -00:00.0';
+          timerSub.innerText = 'MATRIX STANDBY';
+          timerMain.style.color = 'var(--text-muted)';
+        }
+      }
     }
-  }
-}
 
     function toggleFullscreen() {
       if (!document.fullscreenElement) {
@@ -1926,7 +2044,7 @@
 
     function onMidiSuccess(access) {
       midiAccess = access;
-      showToast("MIDI Engine Ready", "USB MIDI Controller siap digunakan.", "midi");
+      showToast("MIDI Ready", "USB MIDI Controller siap digunakan.", "midi");
       const inputs = midiAccess.inputs.values();
       for (const input of inputs) {
         input.onmidimessage = handleMidiMessage;
@@ -1934,7 +2052,7 @@
       midiAccess.onstatechange = (e) => {
         if (e.port.type === 'input' && e.port.state === 'connected') {
           e.port.onmidimessage = handleMidiMessage;
-          showToast("MIDI Device Connected", e.port.name || "USB MIDI Device", "midi");
+          showToast("MIDI Connected", e.port.name || "USB MIDI Device", "midi");
         }
       };
     }
@@ -1946,12 +2064,12 @@
       if (isMidiMode) {
         btn.classList.add('active');
         document.body.classList.add('midi-mode-active');
-        showToast("MIDI Mapping Active", "Klik tombol/fader pada layar lalu gerakkan fader/tombol MIDI Anda.", "midi");
+        showToast("MIDI Mapping Active", "Klik kontrol di layar lalu gerakkan fader/tombol MIDI Anda.", "midi");
       } else {
         btn.classList.remove('active');
         document.body.classList.remove('midi-mode-active');
         selectedMidiTarget = null;
-        showToast("MIDI Mode Closed", "Pengaturan MIDI disimpan.", "midi");
+        showToast("MIDI Closed", "Pengaturan MIDI disimpan.", "midi");
       }
       renderSessionGrid();
     }
@@ -1959,11 +2077,10 @@
     function handleMidiTargetClick(targetId) {
       if (!isMidiMode) return;
       selectedMidiTarget = targetId;
-      showToast("MIDI Target Selected", `Menunggu input hardware untuk: ${targetId}`, "midi");
+      showToast("MIDI Target", `Menunggu input hardware untuk: ${targetId}`, "midi");
       renderSessionGrid();
     }
 
-    // Tombol Transport Utama
     function handlePlayClick(e) {
       if (e) { e.stopPropagation(); e.preventDefault(); }
       if (isMidiMode) {
@@ -1991,13 +2108,11 @@
       }
     }
 
-    // Logika Pemutaran Global Baru
     function triggerGlobalPlay() {
       initAudio();
       playlistState.isPaused = false;
 
       if (isPlaylistModeActive) {
-        // Jalankan Playlist
         if (!project.playlist || project.playlist.items.length === 0) {
           showToast("Playlist Kosong", "Daftarkan audio terlebih dahulu via tombol Gear ⚙.", "warn");
           return;
@@ -2012,7 +2127,6 @@
         playlistState.isRunning = true;
         playQueueIndex(playlistState.currentIndex, true);
       } else {
-        // Mode Matrix Normal
         project.tracks.forEach((track, tIdx) => {
           if (track.activeSlotIndex !== null && track.activeSlotIndex !== undefined) {
             const sIdx = track.activeSlotIndex;
@@ -2048,7 +2162,6 @@
         playlistState.isRunning = false;
         showToast("Playlist Paused", `Antrean dijeda pada baris #${playlistState.currentIndex + 1}`, "playlist");
       } else {
-        // Pause semua track yang berputar
         project.tracks.forEach((_, tIdx) => pauseTrackHold(tIdx));
       }
       renderSessionGrid();
@@ -2080,7 +2193,6 @@
         }
 
         if (isDouble || !isAnyTrackPlaying()) {
-          // Double stop: rewind ke antrean #1
           playlistState.currentIndex = 0;
           playlistState.isRunning = false;
           playlistState.isPaused = false;
@@ -2090,7 +2202,6 @@
           playlistState.isPaused = false;
         }
       } else {
-        // Stop normal matrix
         if (isAnyTrackPlaying()) {
           project.tracks.forEach((_, tIdx) => pauseTrackHold(tIdx));
         } else {
@@ -2111,12 +2222,12 @@
 
       isPlaylistModeActive = !isPlaylistModeActive;
       if (isPlaylistModeActive) {
-        showToast("Playlist Mode Active", "Playback kini dikendalikan oleh susunan Playlist.", "playlist");
+        showToast("Playlist Mode", "Playback kini dikendalikan oleh Playlist.", "playlist");
       } else {
         if (playlistState.isRunning) {
           triggerGlobalPause();
         }
-        showToast("Matrix Mode Active", "Playback dikendalikan langsung dari tabel matrix.", "playlist");
+        showToast("Matrix Mode", "Playback dikendalikan dari grid matrix.", "playlist");
       }
       updateGlobalTransportUI();
     }
@@ -2203,6 +2314,12 @@
     window.addEventListener('click', () => {
       const drop = document.getElementById('fileDropdownMenu');
       if (drop) drop.classList.remove('show');
+      const cp = document.getElementById('colorPickerPopover');
+      if (cp) cp.style.display = 'none';
+      const sm = document.getElementById('slotContextMenu');
+      if (sm) sm.style.display = 'none';
+      const scm = document.getElementById('sceneContextMenu');
+      if (scm) scm.style.display = 'none';
     });
 
     function handleNewProjectClick() {
@@ -2230,6 +2347,7 @@
         document.getElementById('btnAddMarkerBtn').style.display = 'none';
         document.getElementById('markerTipMsg').style.display = 'none';
         document.getElementById('markerChipList').innerHTML = '';
+        updateProjectTitleDisplay();
         renderSessionGrid();
         updateGlobalTransportUI();
         showToast("New Project", "Project baru telah aktif.", "playlist");
@@ -2244,7 +2362,6 @@
         delete project.midiBindings[`track_vol_${track.id}`];
         project.tracks.splice(tIdx, 1);
 
-        // Bersihkan playlist yang merujuk track ini
         project.playlist.items = project.playlist.items.filter(item => item.trackIndex !== tIdx);
 
         if (selectedClipTarget && selectedClipTarget.trackIndex === tIdx) {
@@ -2278,6 +2395,7 @@
         isLoop: false,
         disabled: false,
         gainDb: 0,
+        color: null, // Ableton style custom color code
         markers: []
       };
     }
@@ -2304,6 +2422,7 @@
       showToast("Audio Loaded", `${audioFiles.length} file ditambahkan ke matrix.`, "playlist");
     }
 
+    // Render Matrix Session Grid dengan Dukungan Template Color Coding
     function renderSessionGrid() {
       const grid = document.getElementById('sessionGrid');
       grid.innerHTML = '';
@@ -2403,6 +2522,14 @@
             const isMissing = !audioBufferCache.has(clip.fileName);
             slot.className = `clip-slot ${isSelected ? 'selected' : ''} ${isTrackPlaying ? 'playing' : ''} ${isMissing ? 'missing' : ''} ${clip.disabled ? 'disabled' : ''}`;
 
+            // Penerapan Warna Slot (Border Kiri & Soft Tint Background tanpa menutup teks)
+            if (clip.color) {
+              slot.style.borderLeftColor = clip.color;
+              if (!isTrackPlaying) {
+                slot.style.backgroundColor = `${clip.color}18`; // Transparansi 10%
+              }
+            }
+
             const gainBadge = (clip.gainDb && clip.gainDb > 0) ? ` [+${clip.gainDb.toFixed(1)}dB]` : '';
             const markerBadge = (clip.markers && clip.markers.length > 0) ? ` 🚩${clip.markers.length}` : '';
 
@@ -2474,7 +2601,7 @@
         grid.appendChild(col);
       });
 
-      // 2. Render Master Column
+      // 2. Render Master Scene Column
       const masterCol = document.createElement('div');
       masterCol.className = 'track-column master-column';
 
@@ -2487,14 +2614,26 @@
       sceneSlotsCont.className = 'slots-scroll-viewport';
       sceneSlotsCont.id = 'masterScrollMaster';
 
+      if (!project.sceneColors) {
+        project.sceneColors = new Array(project.sceneNames.length).fill(null);
+      }
+
       project.sceneNames.forEach((name, sIdx) => {
         const sceneSlot = document.createElement('div');
         sceneSlot.className = 'scene-slot';
+        const sceneColor = project.sceneColors[sIdx];
+
+        if (sceneColor) {
+          sceneSlot.style.borderLeftColor = sceneColor;
+          sceneSlot.style.backgroundColor = `${sceneColor}20`;
+        }
+
         sceneSlot.innerHTML = `
           <button class="clip-trigger-btn" style="color: var(--gold);" onclick="playScene(${sIdx})" title="Play Row ${sIdx + 1}">▶</button>
           <input type="text" class="scene-title-input" value="${name}" 
             onchange="renameSceneInline(${sIdx}, this.value)" 
             onkeydown="if(event.key==='Enter') this.blur()">
+          <button class="slot-menu-btn" onclick="openSceneMenu(event, ${sIdx})" title="Opsi Scene">⋮</button>
         `;
         sceneSlotsCont.appendChild(sceneSlot);
       });
@@ -2575,6 +2714,8 @@
     }
 
     const contextMenu = document.getElementById('slotContextMenu');
+    const sceneContextMenu = document.getElementById('sceneContextMenu');
+    let sceneMenuTargetIdx = null;
 
     function openSlotMenu(e, tIdx, sIdx) {
       e.stopPropagation();
@@ -2585,19 +2726,78 @@
 
       const x = e.clientX;
       const y = e.clientY;
-      contextMenu.style.left = `${Math.min(window.innerWidth - 160, x)}px`;
-      contextMenu.style.top = `${Math.min(window.innerHeight - 120, y)}px`;
+      contextMenu.style.left = `${Math.min(window.innerWidth - 175, x)}px`;
+      contextMenu.style.top = `${Math.min(window.innerHeight - 150, y)}px`;
       contextMenu.style.display = 'block';
     }
 
-    window.addEventListener('click', () => {
-      contextMenu.style.display = 'none';
-    });
+    function openSceneMenu(e, sIdx) {
+      e.stopPropagation();
+      sceneMenuTargetIdx = sIdx;
+      const x = e.clientX;
+      const y = e.clientY;
+      sceneContextMenu.style.left = `${Math.min(window.innerWidth - 165, x)}px`;
+      sceneContextMenu.style.top = `${Math.min(window.innerHeight - 100, y)}px`;
+      sceneContextMenu.style.display = 'block';
+    }
 
     function menuActionReplace() {
       if (!contextMenuTarget) return;
       openFileForSlot(contextMenuTarget.tIdx, contextMenuTarget.sIdx);
       contextMenu.style.display = 'none';
+    }
+
+    function menuActionColorPicker(e) {
+      e.stopPropagation();
+      if (!contextMenuTarget) return;
+      activeColorTarget = { type: 'clip', tIdx: contextMenuTarget.tIdx, sIdx: contextMenuTarget.sIdx };
+      contextMenu.style.display = 'none';
+
+      const popover = document.getElementById('colorPickerPopover');
+      popover.style.left = `${Math.min(window.innerWidth - 140, e.clientX)}px`;
+      popover.style.top = `${Math.min(window.innerHeight - 110, e.clientY)}px`;
+      popover.style.display = 'grid';
+    }
+
+    function sceneActionColorPicker(e) {
+      e.stopPropagation();
+      if (sceneMenuTargetIdx === null) return;
+      activeColorTarget = { type: 'scene', sIdx: sceneMenuTargetIdx };
+      sceneContextMenu.style.display = 'none';
+
+      const popover = document.getElementById('colorPickerPopover');
+      popover.style.left = `${Math.min(window.innerWidth - 140, e.clientX)}px`;
+      popover.style.top = `${Math.min(window.innerHeight - 110, e.clientY)}px`;
+      popover.style.display = 'grid';
+    }
+
+    function applyColorChoice(colorHex) {
+      if (!activeColorTarget) return;
+      if (activeColorTarget.type === 'clip') {
+        const clip = project.tracks[activeColorTarget.tIdx].clips[activeColorTarget.sIdx];
+        if (clip) {
+          clip.color = colorHex;
+        }
+      } else if (activeColorTarget.type === 'scene') {
+        if (!project.sceneColors) project.sceneColors = new Array(project.sceneNames.length).fill(null);
+        project.sceneColors[activeColorTarget.sIdx] = colorHex;
+      }
+      autoSaveSession();
+      renderSessionGrid();
+      document.getElementById('colorPickerPopover').style.display = 'none';
+      activeColorTarget = null;
+    }
+
+    function sceneActionRename() {
+      if (sceneMenuTargetIdx === null) return;
+      sceneContextMenu.style.display = 'none';
+      openPromptModal("Rename Scene", "Masukkan nama Scene baru:", project.sceneNames[sceneMenuTargetIdx], (val) => {
+        if (val && val.trim() !== '') {
+          project.sceneNames[sceneMenuTargetIdx] = val.trim();
+          autoSaveSession();
+          renderSessionGrid();
+        }
+      });
     }
 
     function menuActionToggleDisable() {
@@ -2850,7 +3050,7 @@
           renderMarkerChips();
           showToast("Marker Renamed", `Label diperbarui menjadi "${marker.label}"`, "playlist");
         }
-      });
+      }, 10);
     }
 
     function deleteMarker(e, mIdx) {
@@ -3144,12 +3344,14 @@
     function addSceneRow() {
       const newIndex = project.sceneNames.length + 1;
       project.sceneNames.push(`Scene ${newIndex}`);
+      if (!project.sceneColors) project.sceneColors = [];
+      project.sceneColors.push(null);
       project.tracks.forEach(t => t.clips.push(null));
       autoSaveSession();
       renderSessionGrid();
     }
 
-    // Waveform Canvas Rendering & Unified Pointer
+    // Waveform Canvas Rendering
     const canvas = document.getElementById('waveformCanvas');
     const ctx = canvas.getContext('2d');
 
@@ -3290,7 +3492,7 @@
           const step = Math.ceil(data.length / canvas.width);
           const amp = canvas.height / 2;
 
-          ctx.fillStyle = '#b88f28';
+          ctx.fillStyle = clip.color || '#b88f28';
           for (let i = 0; i < canvas.width; i++) {
             let min = 1.0;
             let max = -1.0;
@@ -3390,11 +3592,10 @@
             ctx.lineTo(playX, canvas.height);
             ctx.stroke();
 
-            // Ganti baris penulisan timecodeDisplay di drawWaveformStage menjadi:
-             const remainTime = Math.max(0, clip.duration - cur);
-             document.getElementById('timecodeDisplay').innerText = `${cur.toFixed(2)}s / ${clip.duration.toFixed(2)}s (Sisa: -${remainTime.toFixed(2)}s)`;
+            const remainTime = Math.max(0, clip.duration - cur);
+            document.getElementById('timecodeDisplay').innerText = `${cur.toFixed(2)}s / ${clip.duration.toFixed(2)}s (Sisa: -${remainTime.toFixed(2)}s)`;
           } else {
-            document.getElementById('timecodeDisplay').innerText = `0.00s / ${clip.duration.toFixed(2)}s`;
+            document.getElementById('timecodeDisplay').innerText = `0.00s / ${clip.duration.toFixed(2)}s (Sisa: -${clip.duration.toFixed(2)}s)`;
           }
         }
       }
@@ -3431,7 +3632,6 @@
       autoSaveSession();
     }
 
-    // Mengambil semua klip aktif lengkap dengan koordinat track & slot
     function getMatrixActiveClipsWithLocation() {
       const list = [];
       project.tracks.forEach((track, tIdx) => {
@@ -3486,27 +3686,27 @@
     }
 
     function moveSelectedToQueue() {
-  if (!playlistState.selectedAvailableClip) {
-    showToast("Pilih Audio", "Klik salah satu audio di kolom kiri untuk dimasukkan ke antrean.", "warn");
-    return;
-  }
-  const item = playlistState.selectedAvailableClip;
+      if (!playlistState.selectedAvailableClip) {
+        showToast("Pilih Audio", "Klik salah satu audio di kolom kiri untuk dimasukkan ke antrean.", "warn");
+        return;
+      }
+      const item = playlistState.selectedAvailableClip;
 
-  project.playlist.items.push({
-    id: 'pl_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-    trackIndex: item.trackIndex,
-    slotIndex: item.slotIndex,
-    fileName: item.clip.fileName,
-    startIn: item.clip.startTime || 0,
-    endOut: item.clip.endTime || item.clip.duration,
-    duration: item.clip.duration,
-    delay: 0
-  });
+      project.playlist.items.push({
+        id: 'pl_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+        trackIndex: item.trackIndex,
+        slotIndex: item.slotIndex,
+        fileName: item.clip.fileName,
+        startIn: item.clip.startTime || 0,
+        endOut: item.clip.endTime || item.clip.duration,
+        duration: item.clip.duration,
+        delay: 0
+      });
 
-  autoSaveSession();
-  renderPlaylistQueueTable();
-  showToast("Ditambahkan", `${item.clip.fileName} masuk antrean playlist.`, "playlist");
-}
+      autoSaveSession();
+      renderPlaylistQueueTable();
+      showToast("Ditambahkan", `${item.clip.fileName} masuk antrean playlist.`, "playlist");
+    }
 
     function removeSelectedFromQueue(idx = null) {
       const targetIdx = (idx !== null) ? idx : playlistState.selectedModalRow;
@@ -3531,7 +3731,6 @@
       });
     }
 
-    // Render Tabel Queue Playlist dengan Indikator Aktif
     function renderPlaylistQueueTable() {
       const tbody = document.getElementById('playlistQueueBody');
       const statusEl = document.getElementById('queueStatus');
@@ -3554,7 +3753,7 @@
         tr.className = `vmix-queue-row ${isSelected ? 'selected' : ''} ${isPlaying ? 'active-playing' : ''}`;
         
         const trackObj = project.tracks[item.trackIndex];
-        const trackLabel = trackObj ? `${trackObj.name} - Slot ${item.slotIndex + 1}` : 'Unknown';
+        const trackLabel = trackObj ? `${trackObj.name} - Slot ${item.slotIndex + 1}` : 'Matrix Clip';
 
         tr.innerHTML = `
           <td>${isPlaying ? '<span style="color:var(--green-bright); font-size:0.8rem;">▶</span>' : (idx + 1)}</td>
@@ -3621,7 +3820,6 @@
       }
       playlistState.delayRemaining = 0;
 
-      // Hentikan audio yang sedang berjalan sebelumnya
       project.tracks.forEach((_, tIdx) => pauseTrackHold(tIdx));
 
       playlistState.currentIndex = idx;
@@ -3631,93 +3829,92 @@
       updateGlobalTransportUI();
     }
 
-    // Memainkan Item Playlist Terhubung Langsung ke Mesin Matrix
     function playQueueIndex(idx, resume = false) {
-  if (!isPlaylistModeActive) return;
+      if (!isPlaylistModeActive) return;
 
-  const items = project.playlist.items;
-  if (idx >= items.length) {
-    if (project.playlist.loop) {
-      playlistState.currentIndex = 0;
-      playQueueIndex(0, false);
-    } else {
-      triggerGlobalStop();
-      showToast("Playlist Finished", "Semua antrean playlist telah selesai.", "playlist");
-    }
-    return;
-  }
-
-  const item = items[idx];
-  playlistState.currentIndex = idx;
-
-  // Fallback: jika trackIndex belum tercatat di data item lama, cari slot aktifnya di project
-  if (item.trackIndex === undefined || item.slotIndex === undefined) {
-    for (let t = 0; t < project.tracks.length; t++) {
-      for (let s = 0; s < project.tracks[t].clips.length; s++) {
-        if (project.tracks[t].clips[s] && project.tracks[t].clips[s].fileName === item.fileName) {
-          item.trackIndex = t;
-          item.slotIndex = s;
-          break;
+      const items = project.playlist.items;
+      if (idx >= items.length) {
+        if (project.playlist.loop) {
+          playlistState.currentIndex = 0;
+          playQueueIndex(0, false);
+        } else {
+          triggerGlobalStop();
+          showToast("Playlist Finished", "Semua antrean playlist telah selesai.", "playlist");
         }
-      }
-      if (item.trackIndex !== undefined) break;
-    }
-  }
-
-  if (item.trackIndex === undefined) {
-    showToast("File Missing", `Slot untuk ${item.fileName} tidak ditemukan di matrix.`, "warn");
-    playlistNext();
-    return;
-  }
-
-  // Pilih otomatis klip ini di matrix & tampilkan waveform-nya
-  selectClipForInspection(item.trackIndex, item.slotIndex);
-
-  // Jalankan pemutaran melalui matrix engine
-  startClipPlayback(
-    item.trackIndex, 
-    item.slotIndex, 
-    resume, 
-    resume ? null : item.startIn, 
-    item.endOut,
-    () => {
-      if (!isPlaylistModeActive || playlistState.isPaused) return;
-
-      if (project.playlist.manual) {
-        showToast("Manual Mode", "Klip selesai. Menunggu tombol Next.", "playlist");
-        playlistState.currentIndex = idx + 1;
-        renderPlaylistQueueTable();
         return;
       }
 
-      const delaySec = item.delay || 0;
-      if (delaySec > 0) {
-        playlistState.delayRemaining = delaySec;
-        showToast("Delay Interval", `Menunggu jeda ${delaySec} detik...`, "playlist");
+      const item = items[idx];
+      playlistState.currentIndex = idx;
 
-        playlistState.delayInterval = setInterval(() => {
-          playlistState.delayRemaining--;
-          if (playlistState.delayRemaining <= 0) {
-            clearInterval(playlistState.delayInterval);
-            playlistState.delayInterval = null;
+      // Fallback: cari slot jika trackIndex belum tercatat
+      if (item.trackIndex === undefined || item.slotIndex === undefined) {
+        for (let t = 0; t < project.tracks.length; t++) {
+          for (let s = 0; s < project.tracks[t].clips.length; s++) {
+            if (project.tracks[t].clips[s] && project.tracks[t].clips[s].fileName === item.fileName) {
+              item.trackIndex = t;
+              item.slotIndex = s;
+              break;
+            }
           }
-        }, 1000);
-
-        playlistState.delayTimer = setTimeout(() => {
-          playlistState.currentIndex = idx + 1;
-          playQueueIndex(playlistState.currentIndex, false);
-        }, delaySec * 1000);
-      } else {
-        playlistState.currentIndex = idx + 1;
-        playQueueIndex(playlistState.currentIndex, false);
+          if (item.trackIndex !== undefined) break;
+        }
       }
-    }
-  );
 
-  renderPlaylistQueueTable();
-  renderSessionGrid();
-  showToast("Playlist Cue", `[#${idx+1}] Memutar: ${item.fileName}`, "playlist");
-}
+      if (item.trackIndex === undefined) {
+        showToast("File Missing", `Slot untuk ${item.fileName} tidak ditemukan.`, "warn");
+        playlistNext();
+        return;
+      }
+
+      selectClipForInspection(item.trackIndex, item.slotIndex);
+
+      startClipPlayback(
+        item.trackIndex, 
+        item.slotIndex, 
+        resume, 
+        resume ? null : item.startIn, 
+        item.endOut,
+        () => {
+          if (!isPlaylistModeActive || playlistState.isPaused) return;
+
+          if (project.playlist.manual) {
+            showToast("Manual Mode", "Klip selesai. Menunggu tombol Next.", "playlist");
+            playlistState.currentIndex = idx + 1;
+            renderPlaylistQueueTable();
+            updateGlobalTransportUI();
+            return;
+          }
+
+          const delaySec = item.delay || 0;
+          if (delaySec > 0) {
+            playlistState.delayRemaining = delaySec;
+            showToast("Delay Interval", `Menunggu jeda ${delaySec} detik...`, "playlist");
+
+            playlistState.delayInterval = setInterval(() => {
+              playlistState.delayRemaining--;
+              if (playlistState.delayRemaining <= 0) {
+                clearInterval(playlistState.delayInterval);
+                playlistState.delayInterval = null;
+              }
+            }, 1000);
+
+            playlistState.delayTimer = setTimeout(() => {
+              playlistState.currentIndex = idx + 1;
+              playQueueIndex(playlistState.currentIndex, false);
+            }, delaySec * 1000);
+          } else {
+            playlistState.currentIndex = idx + 1;
+            playQueueIndex(playlistState.currentIndex, false);
+          }
+        }
+      );
+
+      renderPlaylistQueueTable();
+      renderSessionGrid();
+      updateGlobalTransportUI();
+      showToast("Playlist Cue", `[#${idx+1}] Memutar: ${item.fileName}`, "playlist");
+    }
 
     function playlistNext() {
       if (project.playlist.items.length === 0) return;
@@ -3743,9 +3940,11 @@
 
       const exportData = {
         appName: 'Ramatloka Sora',
-        version: '2.1',
+        version: '2.2',
         exportedAt: new Date().toISOString(),
+        projectName: project.projectName || "Untitled Session",
         sceneNames: project.sceneNames,
+        sceneColors: project.sceneColors || [],
         master: project.master,
         tracks: project.tracks,
         playlist: project.playlist || { items: [], loop: false, manual: false, beginSelected: false },
@@ -3753,11 +3952,13 @@
       };
       const jsonStr = JSON.stringify(exportData, null, 2);
 
+      const safeProjectFileName = (project.projectName || "ramatloka-sora-session").toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+
       if (window.showSaveFilePicker) {
         try {
           if (!currentFileHandle || forceSaveAs) {
             currentFileHandle = await window.showSaveFilePicker({
-              suggestedName: 'ramatloka-sora-session.json',
+              suggestedName: `${safeProjectFileName}.json`,
               types: [{
                 description: 'JSON Project File',
                 accept: { 'application/json': ['.json'] }
@@ -3767,8 +3968,12 @@
           const writable = await currentFileHandle.createWritable();
           await writable.write(jsonStr);
           await writable.close();
+          if (currentFileHandle.name) {
+            project.projectName = currentFileHandle.name.replace(/\.json$/i, '');
+            updateProjectTitleDisplay();
+          }
           autoSaveSession();
-          showToast("Project Saved", "File JSON berhasil disimpan.", "playlist");
+          showToast("Project Saved", `File ${project.projectName}.json berhasil disimpan.`, "playlist");
           return;
         } catch (err) {
           if (err.name === 'AbortError') return;
@@ -3778,10 +3983,10 @@
       const blob = new Blob([jsonStr], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `ramatloka-sora-session${forceSaveAs ? '-as' : ''}.json`;
+      a.download = `${safeProjectFileName}${forceSaveAs ? '-as' : ''}.json`;
       a.click();
       autoSaveSession();
-      showToast("Project Exported", "File JSON telah diunduh.", "playlist");
+      showToast("Project Exported", `File ${safeProjectFileName}.json telah diunduh.`, "playlist");
     }
 
     document.getElementById('projectFileInput').addEventListener('change', async (e) => {
@@ -3795,7 +4000,9 @@
           playlistState = { isRunning: false, isPaused: false, currentIndex: -1, selectedModalRow: -1, selectedAvailableClip: null, delayTimer: null, delayRemaining: 0, delayInterval: null };
           
           project.tracks = data.tracks;
+          project.projectName = data.projectName || file.name.replace(/\.json$/i, '');
           project.sceneNames = data.sceneNames || project.sceneNames;
+          project.sceneColors = data.sceneColors || new Array(project.sceneNames.length).fill(null);
           project.master = data.master || { volume: 0.90, pan: 0 };
           project.playlist = data.playlist || { items: [], loop: false, manual: false, beginSelected: false };
           project.midiBindings = data.midiBindings || {};
@@ -3829,6 +4036,7 @@
           }
 
           selectedClipTarget = null;
+          updateProjectTitleDisplay();
           autoSaveSession();
           renderSessionGrid();
           updateGlobalTransportUI();
@@ -3846,7 +4054,7 @@
 
           if (missingFiles.length > 0) {
             const listHtml = `
-              <p>Project berhasil dimuat, namun ditemukan <b>${missingFiles.length} file audio</b> yang belum berada di memori perangkat ini:</p>
+              <p>Project <b>${project.projectName}</b> berhasil dimuat, namun ditemukan <b>${missingFiles.length} file audio</b> yang belum berada di memori perangkat ini:</p>
               <ul class="missing-file-list">
                 ${missingFiles.map(name => `<li class="missing-file-item"><span>📁 ${name}</span><span style="color:var(--danger)">Offline</span></li>`).join('')}
               </ul>
@@ -3854,7 +4062,7 @@
             `;
             showModal("⚠️ Media Files Missing", listHtml);
           } else {
-            showToast("Project Loaded", "Project dan susunan playlist sukses dimuat.", "playlist");
+            showToast("Project Loaded", `Project "${project.projectName}" sukses dimuat.`, "playlist");
           }
         }
       } catch (err) {
