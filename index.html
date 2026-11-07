@@ -2233,40 +2233,53 @@
     }
 
     function handleMidiMessage(event) {
-      const [status, data1, data2] = event.data;
-      const command = status >> 4;
-      const isCC = (command === 0xB);
-      const isNoteOn = (command === 0x9 && data2 > 0);
+      if (!event.data || event.data.length < 2) return;
+      
+      const status = event.data[0];
+      const data1 = event.data[1];
+      const data2 = event.data.length > 2 ? event.data[2] : 0;
+      
+      const messageType = status & 0xF0; // Masking 4-bit status message
+      const isCC = (messageType === 0xB0);
+      const isNoteOn = (messageType === 0x90 && data2 > 0);
 
+      // Mode MIDI Mapping / MIDI Learn
       if (isMidiMode && selectedMidiTarget) {
+        // Pemetaan Slider / Fader Volume (CC)
         if ((selectedMidiTarget.startsWith('track_vol_') || selectedMidiTarget === 'master_vol') && isCC) {
           project.midiBindings[selectedMidiTarget] = { type: 'cc', number: data1 };
           showToast("MIDI Assigned", `${selectedMidiTarget} -> CC #${data1}`, "midi");
           selectedMidiTarget = null;
           autoSaveSession();
           renderSessionGrid();
-        } else if (selectedMidiTarget.startsWith('global_') || selectedMidiTarget === 'playlist_mode_toggle') {
+          return;
+        } 
+        // Pemetaan Tombol Transport & Playlist Toggle (Note On atau CC Button)
+        else if (selectedMidiTarget.startsWith('global_') || selectedMidiTarget === 'playlist_mode_toggle') {
           if (isNoteOn) {
             project.midiBindings[selectedMidiTarget] = { type: 'note', number: data1 };
             showToast("MIDI Assigned", `${selectedMidiTarget} -> Note #${data1}`, "midi");
             selectedMidiTarget = null;
             autoSaveSession();
             renderSessionGrid();
+            return;
           } else if (isCC && data2 > 0) {
             project.midiBindings[selectedMidiTarget] = { type: 'cc_button', number: data1 };
             showToast("MIDI Assigned", `${selectedMidiTarget} -> Button CC #${data1}`, "midi");
             selectedMidiTarget = null;
             autoSaveSession();
             renderSessionGrid();
+            return;
           }
         }
-        return;
       }
 
+      // Mode Eksekusi Playback & Mixing Normal
       const now = performance.now();
 
       for (const [targetId, binding] of Object.entries(project.midiBindings)) {
         if (binding.type === 'cc' && isCC && binding.number === data1) {
+          // Fader volume dinormalisasi ke rentang 0.0 - 1.0
           executeMidiAction(targetId, data2 / 127);
         } else if (binding.type === 'note' && isNoteOn && binding.number === data1) {
           if (now - lastMidiTriggerTime > 180) {
