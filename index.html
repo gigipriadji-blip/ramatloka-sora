@@ -27,6 +27,7 @@
       --green-bright: #3fb950;
       --danger: #f85149;
       --midi-color: #58a6ff;
+      --marker-color: #58a6ff;
     }
 
     * {
@@ -77,16 +78,16 @@
     .global-transport {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       background-color: var(--bg-darkest);
-      padding: 4px 12px;
+      padding: 3px 10px;
       border-radius: 6px;
       border: 1px solid var(--border);
     }
 
     .transport-btn {
-      width: 36px;
-      height: 32px;
+      width: 34px;
+      height: 30px;
       border-radius: 4px;
       border: 1px solid var(--border);
       background: var(--bg-track);
@@ -113,14 +114,101 @@
       border-color: var(--green-bright);
     }
 
+    .transport-btn.btn-pause-global {
+      color: var(--gold);
+    }
+
+    .transport-btn.btn-pause-global.active {
+      background-color: var(--gold);
+      color: #000;
+      border-color: var(--gold-hover);
+    }
+
     .transport-btn.btn-stop-global {
       color: var(--danger);
+    }
+
+    /* Timecode HUD Display */
+    .timecode-lcd {
+      background: #080b0f;
+      border: 1px solid #27303d;
+      border-radius: 4px;
+      padding: 3px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 135px;
+      font-family: "Courier New", Courier, monospace;
+    }
+
+    .timecode-lcd-main {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--green-bright);
+      letter-spacing: 1px;
+    }
+
+    .timecode-lcd-sub {
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .header-actions {
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    /* Playlist Switcher Button */
+    .playlist-trigger-group {
+      display: flex;
+      align-items: center;
+      background: #19202a;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .playlist-gear-btn {
+      background: transparent;
+      border: none;
+      border-right: 1px solid var(--border);
+      padding: 5px 8px;
+      color: var(--text-main);
+      cursor: pointer;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .playlist-gear-btn:hover {
+      background: #2b3543;
+      color: var(--gold);
+    }
+
+    .playlist-toggle-btn {
+      background: transparent;
+      border: none;
+      padding: 5px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: all 0.15s;
+    }
+
+    .playlist-toggle-btn:hover {
+      background: #2b3543;
+    }
+
+    .playlist-toggle-btn.mode-active {
+      background: var(--gold);
+      color: #000;
+      box-shadow: 0 0 10px rgba(227, 179, 65, 0.45);
     }
 
     button {
@@ -228,7 +316,7 @@
       fill: var(--text-main);
     }
 
-    /* MIDI Mapping Visual Highlights */
+    /* MIDI Mode Visuals */
     body.midi-mode-active .midi-mappable {
       outline: 2px dashed var(--midi-color) !important;
       outline-offset: 1px;
@@ -263,7 +351,6 @@
       gap: 8px;
     }
 
-    /* Track Column Layout */
     .track-column {
       width: 175px;
       min-width: 175px;
@@ -332,7 +419,6 @@
       background: transparent;
     }
 
-    /* Synchronized Scroll Viewport */
     .slots-scroll-viewport {
       flex: 1;
       overflow-y: hidden;
@@ -622,26 +708,37 @@
       transition: height 0.05s ease-out;
     }
 
-    /* Bottom: Waveform View */
+    /* Bottom: Waveform View (3 Kolom Berdampingan) */
     .detail-view {
       height: 235px;
       min-height: 235px;
       background-color: var(--bg-panel);
       border-top: 2px solid var(--border);
       display: flex;
-      padding: 10px 16px;
-      gap: 16px;
+      padding: 8px 14px;
+      gap: 12px;
       flex-shrink: 0;
     }
 
     .clip-properties {
-      width: 300px;
-      min-width: 300px;
+      width: 260px;
+      min-width: 260px;
       border-right: 1px solid var(--border);
-      padding-right: 16px;
+      padding-right: 12px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+    }
+
+    .clip-marker-panel {
+      width: 230px;
+      min-width: 230px;
+      border-right: 1px solid var(--border);
+      padding-right: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 6px;
     }
 
     .prop-header {
@@ -649,14 +746,17 @@
       color: var(--gold);
       font-weight: 700;
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .prop-fields {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      font-size: 0.78rem;
+      gap: 5px;
+      font-size: 0.77rem;
     }
 
     .prop-row {
@@ -670,11 +770,11 @@
     }
 
     .prop-row input[type="number"] {
-      width: 75px;
+      width: 70px;
       background-color: var(--bg-darkest);
       border: 1px solid var(--border);
       color: var(--text-main);
-      padding: 3px 6px;
+      padding: 3px 5px;
       border-radius: 3px;
       font-size: 0.75rem;
       text-align: right;
@@ -683,7 +783,7 @@
     .prop-gain-slider {
       -webkit-appearance: none;
       appearance: none;
-      width: 110px;
+      width: 95px;
       height: 5px;
       background: #0d1117;
       border-radius: 3px;
@@ -701,11 +801,84 @@
       cursor: pointer;
     }
 
+    /* Marker List Container */
+    .marker-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 2px;
+      margin-top: 2px;
+    }
+
+    .marker-list::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .marker-list::-webkit-scrollbar-thumb {
+      background: #303742;
+      border-radius: 2px;
+    }
+
+    .marker-chip {
+      background: #111722;
+      border: 1px solid var(--marker-color);
+      color: var(--text-main);
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: background-color 0.12s;
+    }
+
+    .marker-chip:hover {
+      background: #192738;
+      border-color: #79b8ff;
+    }
+
+    .marker-chip-info {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .marker-chip-label {
+      font-weight: 700;
+      color: var(--marker-color);
+    }
+
+    .marker-chip-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 6px;
+      flex-shrink: 0;
+    }
+
+    .marker-chip .chip-del {
+      color: var(--danger);
+      font-weight: bold;
+      padding: 0 2px;
+    }
+
+    .marker-chip .chip-del:hover {
+      color: #ff7b72;
+    }
+
+    /* Waveform Stage */
     .waveform-stage {
       flex: 1;
       display: flex;
       flex-direction: column;
       gap: 6px;
+      min-width: 0;
     }
 
     .waveform-info-bar {
@@ -733,7 +906,7 @@
       display: block;
     }
 
-    /* Dropdown & Modal Styles */
+    /* Context Menu */
     .custom-context-menu {
       position: fixed;
       display: none;
@@ -765,14 +938,64 @@
       color: var(--danger);
     }
 
+    /* Floating Toast HUD Notification System */
+    #toastContainer {
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .toast-hud {
+      background: rgba(18, 24, 32, 0.95);
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.8), 0 0 10px rgba(88, 166, 255, 0.2);
+      backdrop-filter: blur(8px);
+      padding: 10px 14px;
+      border-radius: 6px;
+      color: var(--text-main);
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 250px;
+      max-width: 380px;
+      transform: translateX(120%);
+      transition: transform 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.25s;
+      opacity: 0;
+      pointer-events: auto;
+    }
+
+    .toast-hud.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .toast-hud.toast-midi {
+      border-left: 4px solid var(--midi-color);
+    }
+
+    .toast-hud.toast-playlist {
+      border-left: 4px solid var(--green-bright);
+    }
+
+    .toast-hud.toast-warn {
+      border-left: 4px solid var(--danger);
+    }
+
+    /* Modal System */
     .modal-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(5, 7, 10, 0.75);
-      backdrop-filter: blur(4px);
+      background: rgba(5, 7, 10, 0.78);
+      backdrop-filter: blur(5px);
       display: none;
       align-items: center;
       justify-content: center;
@@ -783,16 +1006,21 @@
       background: #161b22;
       border: 1px solid var(--border);
       border-radius: 8px;
-      width: 460px;
+      width: 480px;
       max-width: 90vw;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85);
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
 
+    .modal-card.modal-wide {
+      width: 820px;
+      max-width: 95vw;
+    }
+
     .modal-header {
-      padding: 14px 18px;
+      padding: 12px 18px;
       border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
@@ -814,7 +1042,7 @@
       font-size: 0.85rem;
       color: var(--text-muted);
       line-height: 1.5;
-      max-height: 260px;
+      max-height: 440px;
       overflow-y: auto;
     }
 
@@ -825,6 +1053,173 @@
       display: flex;
       justify-content: flex-end;
       gap: 8px;
+      align-items: center;
+    }
+
+    /* vMix Style Playlist Modal Layout */
+    .vmix-playlist-stage {
+      display: flex;
+      gap: 12px;
+      height: 330px;
+    }
+
+    .vmix-panel-box {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #0f1318;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .vmix-panel-head {
+      background: #1b222c;
+      padding: 6px 10px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .vmix-item-list {
+      flex: 1;
+      overflow-y: auto;
+      list-style: none;
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .vmix-input-item {
+      padding: 6px 8px;
+      background: #151a22;
+      border: 1px solid #232b36;
+      border-radius: 4px;
+      color: var(--text-main);
+      font-size: 0.75rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .vmix-input-item:hover {
+      background: #1d2532;
+      border-color: var(--gold);
+    }
+
+    .vmix-input-item.selected {
+      background: #253346;
+      border-color: var(--midi-color);
+      color: #fff;
+    }
+
+    .vmix-middle-actions {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 4px;
+    }
+
+    .vmix-middle-btn {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      justify-content: center;
+      font-size: 1rem;
+      background: #1e2633;
+      border-color: #384556;
+      color: var(--gold);
+    }
+
+    .vmix-queue-table-wrap {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .vmix-queue-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.74rem;
+      color: var(--text-main);
+      text-align: left;
+    }
+
+    .vmix-queue-table th {
+      background: #181f28;
+      padding: 5px 6px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.68rem;
+    }
+
+    .vmix-queue-table td {
+      padding: 5px 6px;
+      border-bottom: 1px solid #1e2530;
+    }
+
+    .vmix-queue-row {
+      cursor: pointer;
+      transition: background-color 0.15s;
+    }
+
+    .vmix-queue-row:hover {
+      background: #1c2430;
+    }
+
+    .vmix-queue-row.selected {
+      background: #26354a !important;
+    }
+
+    /* Active Highlight Indicator in Modal Table */
+    .vmix-queue-row.active-playing {
+      background: #133a22 !important;
+      color: #fff;
+      font-weight: 700;
+      border-left: 3px solid var(--green-bright);
+      animation: pulseActiveRow 1.8s infinite ease-in-out;
+    }
+
+    @keyframes pulseActiveRow {
+      0% { background-color: #133a22; }
+      50% { background-color: #1b5331; }
+      100% { background-color: #133a22; }
+    }
+
+    .vmix-table-input {
+      width: 52px;
+      background: #090c10;
+      border: 1px solid #30363d;
+      color: var(--text-main);
+      padding: 2px 4px;
+      font-size: 0.72rem;
+      text-align: right;
+      border-radius: 3px;
+    }
+
+    .vmix-options-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.75rem;
+      color: var(--text-main);
+      margin-top: 10px;
+      padding: 6px 10px;
+      background: #0f1318;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .vmix-options-bar label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
     }
 
     .missing-file-list {
@@ -854,6 +1249,9 @@
 </head>
 <body>
 
+  <!-- Floating Toast HUD Container -->
+  <div id="toastContainer"></div>
+
   <!-- Top Global Header -->
   <header>
     <div class="brand-group">
@@ -861,18 +1259,32 @@
       <span style="font-size: 0.75rem; color: var(--text-muted);">| Cue Matrix Engine</span>
     </div>
 
-    <!-- DAW Global Transport -->
+    <!-- DAW Global Transport & Digital Timer HUD -->
     <div class="global-transport">
-      <button class="transport-btn btn-play-global midi-mappable" id="globalPlayBtn" data-midi-target="global_play" onclick="handlePlayClick(event)" title="Global Play (Spacebar)">
+      <button class="transport-btn btn-play-global midi-mappable" id="globalPlayBtn" data-midi-target="global_play" onclick="handlePlayClick(event)" title="Play / Resume (Spacebar)">
         ▶
       </button>
-      <button class="transport-btn btn-stop-global midi-mappable" id="globalStopBtn" data-midi-target="global_stop" onclick="handleStopClick(event)" title="Global Stop: 1x Pause, 2x Rewind">
+      <button class="transport-btn btn-pause-global midi-mappable" id="globalPauseBtn" data-midi-target="global_pause" onclick="handlePauseClick(event)" title="Pause Playback (Tahan Posisi)">
+        ⏸
+      </button>
+      <button class="transport-btn btn-stop-global midi-mappable" id="globalStopBtn" data-midi-target="global_stop" onclick="handleStopClick(event)" title="Stop: 1x Rewind to Start, 2x Reset to Queue #1">
         ⏹
       </button>
-      <span style="font-size: 0.72rem; color: var(--text-muted); margin-left: 4px;">[Space]</span>
+
+      <!-- Digital Timer LCD HUD -->
+      <div class="timecode-lcd">
+        <span class="timecode-lcd-main" id="globalTimerLcd">00:00.0</span>
+        <span class="timecode-lcd-sub" id="globalTimerSub">MATRIX MODE</span>
+      </div>
     </div>
 
     <div class="header-actions">
+      <!-- Playlist Mode Switcher & Setup Gear Button -->
+      <div class="playlist-trigger-group">
+        <button class="playlist-gear-btn" onclick="openPlaylistSetupModal()" title="Setup Playlist Sequence">⚙</button>
+        <button class="playlist-toggle-btn midi-mappable" id="playlistToggleBtn" data-midi-target="playlist_mode_toggle" onclick="togglePlaylistMode()" title="Aktifkan / Nonaktifkan Playlist Mode">PlayList</button>
+      </div>
+
       <!-- File Dropdown -->
       <div class="dropdown-container">
         <button class="btn-accent" onclick="toggleFileDropdown(event)">📁 File ▾</button>
@@ -899,20 +1311,20 @@
     <div class="matrix-board" id="sessionGrid"></div>
   </main>
 
-  <!-- Bottom Waveform & Properties View -->
+  <!-- Bottom Waveform & Properties View (3 Kolom Berdampingan) -->
   <footer class="detail-view">
+    <!-- Kolom 1: Clip & Loop Properties -->
     <div class="clip-properties">
       <div>
         <div class="prop-header">Clip & Loop Properties</div>
         <div id="noSelectionMsg" style="color: var(--text-muted); font-size: 0.78rem;">
-          Pilih salah satu klip untuk melihat waveform, mengatur volume, gain boost, dan loop marker.
+          Pilih salah satu klip audio di matrix untuk melihat waveform, mengatur level, gain boost, dan loop.
         </div>
         <div class="prop-fields" id="propControls" style="display: none;">
           <div class="prop-row">
             <label>Name:</label>
-            <span id="propClipName" style="font-weight: 600; max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-</span>
+            <span id="propClipName" style="font-weight: 600; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-</span>
           </div>
-          <!-- Clip Gain Boost & Auto Maximize -->
           <div class="prop-row">
             <label>Clip Gain:</label>
             <div style="display: flex; align-items: center; gap: 6px;">
@@ -937,19 +1349,36 @@
             <label>Loop Playback:</label>
             <input type="checkbox" id="propLoop" onchange="updateCueSettingsFromInput()">
           </div>
-          <div style="font-size: 0.68rem; color: var(--gold); margin-top: 4px; line-height: 1.3;">
-            💡 <i>Drag handle hijau/merah di waveform untuk loop. Ketuk canvas di mana saja untuk seek playhead!</i>
+          <div style="font-size: 0.66rem; color: var(--gold); margin-top: 4px; line-height: 1.25;">
+            💡 <i>Drag handle hijau/merah di waveform untuk set loop start/end.</i>
           </div>
         </div>
       </div>
-      <div id="relocateWrap" style="display: none;">
+      <div id="relocateWrap" style="display: none; margin-top: 6px;">
         <button style="width: 100%; color: var(--danger); border-color: var(--danger);" onclick="triggerRelocate()">
           ⚠️ Locate Missing File
         </button>
       </div>
     </div>
 
-    <!-- Waveform Canvas -->
+    <!-- Kolom 2: Dedicated Marker Panel -->
+    <div class="clip-marker-panel">
+      <div class="prop-header">
+        <span style="color: var(--marker-color);">🚩 Markers</span>
+        <button id="btnAddMarkerBtn" style="padding: 2px 7px; font-size: 0.68rem; color: var(--marker-color); border-color: var(--marker-color); display: none;" onclick="addMarkerAtCurrentPos()" title="Tambah marker di posisi playhead saat ini">
+          + Add Marker
+        </button>
+      </div>
+      <div id="noMarkerSelectionMsg" style="color: var(--text-muted); font-size: 0.74rem;">
+        Pilih klip audio untuk menambah & mengatur marker bendera.
+      </div>
+      <div class="marker-list" id="markerChipList"></div>
+      <div id="markerTipMsg" style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.2; margin-top: auto; display: none;">
+        💡 <i>Klik bendera untuk jump seek. Double-click bendera di waveform untuk rename.</i>
+      </div>
+    </div>
+
+    <!-- Kolom 3: Waveform Canvas -->
     <div class="waveform-stage">
       <div class="waveform-info-bar">
         <span id="waveformStatus">Inspecting: None</span>
@@ -968,16 +1397,102 @@
     <div class="context-menu-item danger" onclick="menuActionDelete()">🗑 Hapus Audio</div>
   </div>
 
-  <!-- Custom Modal Popup -->
+  <!-- Custom Generic Modal Popup -->
   <div class="modal-overlay" id="customModal">
     <div class="modal-card">
       <div class="modal-header">
-        <div class="modal-title" id="modalTitle">⚠️ Media Files Missing</div>
+        <div class="modal-title" id="modalTitle">⚠️ Notifikasi</div>
         <button style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:1rem;" onclick="closeModal()">✕</button>
       </div>
       <div class="modal-body" id="modalBody"></div>
       <div class="modal-footer" id="modalFooter">
         <button onclick="closeModal()">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- vMix Style Playlist Setup Modal -->
+  <div class="modal-overlay" id="playlistModal">
+    <div class="modal-card modal-wide">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>📋 PlayList Setup Manager</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button style="padding: 3px 8px; font-size: 0.7rem;" onclick="clearCurrentPlaylist()">Clear All</button>
+          <button style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:1.1rem;" onclick="closePlaylistSetupModal()">✕</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="vmix-playlist-stage">
+          <!-- Left: Available Inputs from Matrix -->
+          <div class="vmix-panel-box">
+            <div class="vmix-panel-head">
+              <span>Available Matrix Clips</span>
+              <span id="availCount" style="color:var(--text-muted); font-size:0.68rem;">0 files</span>
+            </div>
+            <ul class="vmix-item-list" id="availableClipList"></ul>
+          </div>
+
+          <!-- Middle: Transfer Arrows -->
+          <div class="vmix-middle-actions">
+            <button class="vmix-middle-btn" onclick="moveSelectedToQueue()" title="Tambahkan ke Playlist">❯</button>
+            <button class="vmix-middle-btn" onclick="removeSelectedFromQueue()" title="Keluarkan dari Playlist">❮</button>
+          </div>
+
+          <!-- Right: Playlist Queue Table -->
+          <div class="vmix-panel-box">
+            <div class="vmix-panel-head">
+              <span>Playlist Sequence</span>
+              <span id="queueStatus" style="color:var(--gold); font-size:0.68rem;">0 items</span>
+            </div>
+            <div class="vmix-queue-table-wrap">
+              <table class="vmix-queue-table">
+                <thead>
+                  <tr>
+                    <th style="width: 25px;">#</th>
+                    <th>Audio Name (Track Slot)</th>
+                    <th style="width: 60px;">In (s)</th>
+                    <th style="width: 60px;">Out (s)</th>
+                    <th style="width: 60px;">Delay (s)</th>
+                    <th style="width: 30px;"></th>
+                  </tr>
+                </thead>
+                <tbody id="playlistQueueBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Options Checkboxes -->
+        <div class="vmix-options-bar">
+          <label><input type="checkbox" id="chkPlaylistLoop" onchange="updatePlaylistOptions()"> Loop Playlist</label>
+          <label><input type="checkbox" id="chkPlaylistBeginSelected" onchange="updatePlaylistOptions()"> Begin from selected item</label>
+          <label><input type="checkbox" id="chkPlaylistManual" onchange="updatePlaylistOptions()"> Manual Mode (Wait Next)</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-accent" onclick="startPlaylistFromModal()">▶ Start / Resume</button>
+        <button onclick="playlistPrevious()">⏮ Previous</button>
+        <button onclick="playlistNext()">⏭ Next</button>
+        <button onclick="closePlaylistSetupModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Prompt/Rename Modal -->
+  <div class="modal-overlay" id="promptModal">
+    <div class="modal-card" style="width: 360px;">
+      <div class="modal-header">
+        <div class="modal-title" id="promptTitle">✏️ Ubah Teks</div>
+      </div>
+      <div class="modal-body" style="padding: 14px 18px;">
+        <label id="promptMsg" style="font-size:0.78rem; color:var(--text-main); display:block; margin-bottom:8px;"></label>
+        <input type="text" id="promptInput" maxlength="10" style="width:100%; background:#090c10; border:1px solid var(--border); color:var(--gold); font-weight:bold; padding:6px 10px; border-radius:4px; font-size:0.85rem; outline:none;">
+      </div>
+      <div class="modal-footer">
+        <button onclick="closePromptModal(false)">Batal</button>
+        <button class="btn-accent" onclick="closePromptModal(true)">Simpan</button>
       </div>
     </div>
   </div>
@@ -1038,6 +1553,12 @@
         { id: 2, name: "Audio 2", volume: 0.85, pan: 0, activeSlotIndex: 0, clips: [null, null, null, null] },
         { id: 3, name: "SFX / Cue", volume: 0.95, pan: 0, activeSlotIndex: 0, clips: [null, null, null, null] }
       ],
+      playlist: {
+        items: [],
+        loop: false,
+        manual: false,
+        beginSelected: false
+      },
       midiBindings: {}
     };
 
@@ -1058,6 +1579,110 @@
     let midiAccess = null;
     let lastMidiTriggerTime = 0;
 
+    // Arsitektur Playlist & Playback State
+    let isPlaylistModeActive = false;
+    let playlistState = {
+      isRunning: false,
+      isPaused: false,
+      currentIndex: -1,
+      selectedModalRow: -1,
+      selectedAvailableClip: null,
+      delayTimer: null,
+      delayRemaining: 0,
+      delayInterval: null
+    };
+
+    // Format Digital Waktu (MM:SS.s)
+    function formatTimecode(seconds) {
+      if (isNaN(seconds) || seconds < 0) seconds = 0;
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      const tenths = Math.floor((seconds % 1) * 10);
+      return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${tenths}`;
+    }
+
+    // Toast HUD System
+    function showToast(title, desc, type = 'midi') {
+      const cont = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast-hud toast-${type}`;
+      
+      let icon = '🎹';
+      if (type === 'playlist') icon = '▶';
+      if (type === 'warn') icon = '⚠️';
+
+      toast.innerHTML = `
+        <div style="font-size:1.15rem;">${icon}</div>
+        <div style="display:flex; flex-direction:column; gap:2px; overflow:hidden;">
+          <span style="font-weight:700; color:#fff; font-size:0.78rem;">${title}</span>
+          <span style="color:var(--text-muted); font-size:0.72rem; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${desc}</span>
+        </div>
+      `;
+
+      cont.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 10);
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 260);
+      }, 3500);
+    }
+
+    // Modal Handlers
+    function showModal(title, bodyHtml, footerHtml) {
+      document.getElementById('modalTitle').innerHTML = title;
+      document.getElementById('modalBody').innerHTML = bodyHtml;
+      if (footerHtml) {
+        document.getElementById('modalFooter').innerHTML = footerHtml;
+      } else {
+        document.getElementById('modalFooter').innerHTML = `<button onclick="closeModal()">Tutup</button>`;
+      }
+      document.getElementById('customModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('customModal').style.display = 'none';
+    }
+
+    function showCustomConfirm(title, message, onConfirm) {
+      showModal(
+        `⚠️ ${title}`,
+        `<p>${message}</p>`,
+        `
+          <button onclick="closeModal()">Batal</button>
+          <button class="btn-accent" id="confirmModalBtn">Lanjutkan</button>
+        `
+      );
+      document.getElementById('confirmModalBtn').onclick = () => {
+        closeModal();
+        onConfirm();
+      };
+    }
+
+    // Custom Prompt Dialog
+    let promptCallback = null;
+    function openPromptModal(title, msg, defaultVal, callback) {
+      document.getElementById('promptTitle').innerText = title;
+      document.getElementById('promptMsg').innerText = msg;
+      const input = document.getElementById('promptInput');
+      input.value = defaultVal || '';
+      promptCallback = callback;
+      document.getElementById('promptModal').style.display = 'flex';
+      setTimeout(() => {
+        input.focus();
+        input.select();
+      }, 50);
+    }
+
+    function closePromptModal(isSave) {
+      const input = document.getElementById('promptInput');
+      document.getElementById('promptModal').style.display = 'none';
+      if (isSave && promptCallback) {
+        promptCallback(input.value);
+      }
+      promptCallback = null;
+    }
+
     function autoSaveSession() {
       try {
         localStorage.setItem('ramatloka_sora_last_session', JSON.stringify(project));
@@ -1074,6 +1699,12 @@
             project = parsed;
             if (!project.midiBindings) project.midiBindings = {};
             if (!project.master) project.master = { volume: 0.90, pan: 0 };
+            if (!project.playlist) project.playlist = { items: [], loop: false, manual: false, beginSelected: false };
+            project.tracks.forEach(t => {
+              t.clips.forEach(c => {
+                if (c && !c.markers) c.markers = [];
+              });
+            });
           }
         } catch (e) {}
       }
@@ -1173,15 +1804,108 @@
       return false;
     }
 
+    // Memperbarui UI Transport & LCD Digital Timer secara Realtime
     function updateGlobalTransportUI() {
-      const anyPlaying = isAnyTrackPlaying();
-      const playBtn = document.getElementById('globalPlayBtn');
-      if (anyPlaying) {
-        playBtn.classList.add('active');
-      } else {
-        playBtn.classList.remove('active');
-      }
+  const anyPlaying = isAnyTrackPlaying();
+  const playBtn = document.getElementById('globalPlayBtn');
+  const pauseBtn = document.getElementById('globalPauseBtn');
+  const pToggle = document.getElementById('playlistToggleBtn');
+
+  if (playBtn) {
+    if (anyPlaying) {
+      playBtn.classList.add('active');
+      if (pauseBtn) pauseBtn.classList.remove('active');
+    } else {
+      playBtn.classList.remove('active');
     }
+  }
+
+  if (pauseBtn) {
+    if (playlistState.isPaused) {
+      pauseBtn.classList.add('active');
+    } else {
+      pauseBtn.classList.remove('active');
+    }
+  }
+
+  if (pToggle) {
+    if (isPlaylistModeActive) {
+      pToggle.classList.add('mode-active');
+    } else {
+      pToggle.classList.remove('mode-active');
+    }
+  }
+
+  // Display LCD Timer Header
+  const timerMain = document.getElementById('globalTimerLcd');
+  const timerSub = document.getElementById('globalTimerSub');
+
+  if (isPlaylistModeActive) {
+    const items = project.playlist.items;
+    const total = items.length;
+    const curIdx = playlistState.currentIndex;
+
+    if (playlistState.delayRemaining > 0) {
+      timerMain.innerText = `00:${playlistState.delayRemaining.toString().padStart(2, '0')}.0`;
+      timerSub.innerText = `DELAY [NEXT #${curIdx + 2}]`;
+      timerMain.style.color = 'var(--gold)';
+    } else if (curIdx >= 0 && curIdx < total) {
+      const item = items[curIdx];
+      const track = project.tracks[item.trackIndex];
+      const nodes = trackAudioNodes.get(track?.id);
+
+      if (nodes && nodes.clip) {
+        let cur = 0;
+        if (nodes.isPlaying) {
+          const elapsed = audioContext.currentTime - nodes.startCtxTime;
+          cur = nodes.startOffset + elapsed;
+        } else {
+          cur = nodes.currentPlayhead || item.startIn;
+        }
+        const effectiveEnd = item.endOut || nodes.clip.duration;
+        const remain = Math.max(0, effectiveEnd - cur);
+
+        // Menampilkan Elapsed dan Sisa Waktu di LCD
+        timerMain.innerText = `${formatTimecode(cur)} / -${formatTimecode(remain)}`;
+        timerSub.innerText = `PL [${curIdx + 1}/${total}] ${item.fileName.substring(0, 10)}`;
+        timerMain.style.color = 'var(--green-bright)';
+      }
+    } else {
+      timerMain.innerText = '00:00.0';
+      timerSub.innerText = `PLAYLIST READY (${total} ITEMS)`;
+      timerMain.style.color = 'var(--text-main)';
+    }
+  } else {
+    // Mode Matrix Normal
+    let maxCur = 0;
+    let maxDur = 0;
+    let activeName = '';
+
+    project.tracks.forEach(track => {
+      const nodes = trackAudioNodes.get(track.id);
+      if (nodes && nodes.isPlaying && nodes.clip) {
+        const elapsed = audioContext.currentTime - nodes.startCtxTime;
+        const cur = nodes.startOffset + elapsed;
+        if (cur > maxCur) {
+          maxCur = cur;
+          maxDur = nodes.clip.duration;
+          activeName = track.name;
+        }
+      }
+    });
+
+    if (maxCur > 0) {
+      const remain = Math.max(0, maxDur - maxCur);
+      timerMain.innerText = `${formatTimecode(maxCur)} / -${formatTimecode(remain)}`;
+      timerSub.innerText = `MATRIX: ${activeName}`;
+      timerMain.style.color = 'var(--green-bright)';
+    } else {
+      timerMain.innerText = '00:00.0';
+      timerSub.innerText = 'MATRIX STANDBY';
+      timerMain.style.color = 'var(--text-muted)';
+    }
+  }
+}
 
     function toggleFullscreen() {
       if (!document.fullscreenElement) {
@@ -1191,16 +1915,18 @@
       }
     }
 
+    // Web MIDI Engine
     function initWebMidi() {
       if (navigator.requestMIDIAccess && !midiAccess) {
         navigator.requestMIDIAccess().then(onMidiSuccess, () => {
-          console.warn("Web MIDI API tidak diizinkan atau tidak didukung pada browser ini.");
+          showToast("MIDI Warning", "Web MIDI API tidak diizinkan pada browser ini.", "warn");
         });
       }
     }
 
     function onMidiSuccess(access) {
       midiAccess = access;
+      showToast("MIDI Engine Ready", "USB MIDI Controller siap digunakan.", "midi");
       const inputs = midiAccess.inputs.values();
       for (const input of inputs) {
         input.onmidimessage = handleMidiMessage;
@@ -1208,6 +1934,7 @@
       midiAccess.onstatechange = (e) => {
         if (e.port.type === 'input' && e.port.state === 'connected') {
           e.port.onmidimessage = handleMidiMessage;
+          showToast("MIDI Device Connected", e.port.name || "USB MIDI Device", "midi");
         }
       };
     }
@@ -1219,10 +1946,12 @@
       if (isMidiMode) {
         btn.classList.add('active');
         document.body.classList.add('midi-mode-active');
+        showToast("MIDI Mapping Active", "Klik tombol/fader pada layar lalu gerakkan fader/tombol MIDI Anda.", "midi");
       } else {
         btn.classList.remove('active');
         document.body.classList.remove('midi-mode-active');
         selectedMidiTarget = null;
+        showToast("MIDI Mode Closed", "Pengaturan MIDI disimpan.", "midi");
       }
       renderSessionGrid();
     }
@@ -1230,36 +1959,60 @@
     function handleMidiTargetClick(targetId) {
       if (!isMidiMode) return;
       selectedMidiTarget = targetId;
+      showToast("MIDI Target Selected", `Menunggu input hardware untuk: ${targetId}`, "midi");
       renderSessionGrid();
     }
 
+    // Tombol Transport Utama
     function handlePlayClick(e) {
-      e.stopPropagation();
-      e.preventDefault();
+      if (e) { e.stopPropagation(); e.preventDefault(); }
       if (isMidiMode) {
         handleMidiTargetClick('global_play');
       } else {
-        toggleGlobalPlay();
+        triggerGlobalPlay();
+      }
+    }
+
+    function handlePauseClick(e) {
+      if (e) { e.stopPropagation(); e.preventDefault(); }
+      if (isMidiMode) {
+        handleMidiTargetClick('global_pause');
+      } else {
+        triggerGlobalPause();
       }
     }
 
     function handleStopClick(e) {
-      e.stopPropagation();
-      e.preventDefault();
+      if (e) { e.stopPropagation(); e.preventDefault(); }
       if (isMidiMode) {
         handleMidiTargetClick('global_stop');
       } else {
-        handleGlobalStop();
+        triggerGlobalStop();
       }
     }
 
-    function toggleGlobalPlay() {
-      if (isMidiMode) return;
+    // Logika Pemutaran Global Baru
+    function triggerGlobalPlay() {
       initAudio();
+      playlistState.isPaused = false;
 
-      if (isAnyTrackPlaying()) {
-        handleGlobalStop();
+      if (isPlaylistModeActive) {
+        // Jalankan Playlist
+        if (!project.playlist || project.playlist.items.length === 0) {
+          showToast("Playlist Kosong", "Daftarkan audio terlebih dahulu via tombol Gear ⚙.", "warn");
+          return;
+        }
+
+        if (playlistState.currentIndex === -1 || playlistState.currentIndex >= project.playlist.items.length) {
+          playlistState.currentIndex = (project.playlist.beginSelected && playlistState.selectedModalRow !== -1)
+            ? playlistState.selectedModalRow
+            : 0;
+        }
+
+        playlistState.isRunning = true;
+        playQueueIndex(playlistState.currentIndex, true);
       } else {
+        // Mode Matrix Normal
         project.tracks.forEach((track, tIdx) => {
           if (track.activeSlotIndex !== null && track.activeSlotIndex !== undefined) {
             const sIdx = track.activeSlotIndex;
@@ -1270,6 +2023,102 @@
         });
         renderSessionGrid();
       }
+      updateGlobalTransportUI();
+    }
+
+    function triggerGlobalPause() {
+      initAudio();
+      playlistState.isPaused = true;
+
+      if (isPlaylistModeActive) {
+        if (playlistState.delayTimer) {
+          clearTimeout(playlistState.delayTimer);
+          playlistState.delayTimer = null;
+        }
+        if (playlistState.delayInterval) {
+          clearInterval(playlistState.delayInterval);
+          playlistState.delayInterval = null;
+        }
+
+        const items = project.playlist.items;
+        if (playlistState.currentIndex >= 0 && playlistState.currentIndex < items.length) {
+          const item = items[playlistState.currentIndex];
+          pauseTrackHold(item.trackIndex);
+        }
+        playlistState.isRunning = false;
+        showToast("Playlist Paused", `Antrean dijeda pada baris #${playlistState.currentIndex + 1}`, "playlist");
+      } else {
+        // Pause semua track yang berputar
+        project.tracks.forEach((_, tIdx) => pauseTrackHold(tIdx));
+      }
+      renderSessionGrid();
+      renderPlaylistQueueTable();
+      updateGlobalTransportUI();
+    }
+
+    let lastStopClickTime = 0;
+    function triggerGlobalStop() {
+      const now = performance.now();
+      const isDouble = (now - lastStopClickTime < 320);
+      lastStopClickTime = now;
+
+      if (isPlaylistModeActive) {
+        if (playlistState.delayTimer) {
+          clearTimeout(playlistState.delayTimer);
+          playlistState.delayTimer = null;
+        }
+        if (playlistState.delayInterval) {
+          clearInterval(playlistState.delayInterval);
+          playlistState.delayInterval = null;
+        }
+        playlistState.delayRemaining = 0;
+
+        const items = project.playlist.items;
+        if (playlistState.currentIndex >= 0 && playlistState.currentIndex < items.length) {
+          const item = items[playlistState.currentIndex];
+          stopTrackSingle(item.trackIndex);
+        }
+
+        if (isDouble || !isAnyTrackPlaying()) {
+          // Double stop: rewind ke antrean #1
+          playlistState.currentIndex = 0;
+          playlistState.isRunning = false;
+          playlistState.isPaused = false;
+          showToast("Playlist Reset", "Antrean di-rewind kembali ke Item #1.", "playlist");
+        } else {
+          playlistState.isRunning = false;
+          playlistState.isPaused = false;
+        }
+      } else {
+        // Stop normal matrix
+        if (isAnyTrackPlaying()) {
+          project.tracks.forEach((_, tIdx) => pauseTrackHold(tIdx));
+        } else {
+          project.tracks.forEach((_, tIdx) => rewindTrackToStart(tIdx));
+        }
+      }
+
+      renderSessionGrid();
+      renderPlaylistQueueTable();
+      updateGlobalTransportUI();
+    }
+
+    function togglePlaylistMode() {
+      if (isMidiMode) {
+        handleMidiTargetClick('playlist_mode_toggle');
+        return;
+      }
+
+      isPlaylistModeActive = !isPlaylistModeActive;
+      if (isPlaylistModeActive) {
+        showToast("Playlist Mode Active", "Playback kini dikendalikan oleh susunan Playlist.", "playlist");
+      } else {
+        if (playlistState.isRunning) {
+          triggerGlobalPause();
+        }
+        showToast("Matrix Mode Active", "Playback dikendalikan langsung dari tabel matrix.", "playlist");
+      }
+      updateGlobalTransportUI();
     }
 
     function handleMidiMessage(event) {
@@ -1281,17 +2130,20 @@
       if (isMidiMode && selectedMidiTarget) {
         if ((selectedMidiTarget.startsWith('track_vol_') || selectedMidiTarget === 'master_vol') && isCC) {
           project.midiBindings[selectedMidiTarget] = { type: 'cc', number: data1 };
+          showToast("MIDI Assigned", `${selectedMidiTarget} -> CC #${data1}`, "midi");
           selectedMidiTarget = null;
           autoSaveSession();
           renderSessionGrid();
-        } else if (selectedMidiTarget.startsWith('global_')) {
+        } else if (selectedMidiTarget.startsWith('global_') || selectedMidiTarget === 'playlist_mode_toggle') {
           if (isNoteOn) {
             project.midiBindings[selectedMidiTarget] = { type: 'note', number: data1 };
+            showToast("MIDI Assigned", `${selectedMidiTarget} -> Note #${data1}`, "midi");
             selectedMidiTarget = null;
             autoSaveSession();
             renderSessionGrid();
           } else if (isCC && data2 > 0) {
             project.midiBindings[selectedMidiTarget] = { type: 'cc_button', number: data1 };
+            showToast("MIDI Assigned", `${selectedMidiTarget} -> Button CC #${data1}`, "midi");
             selectedMidiTarget = null;
             autoSaveSession();
             renderSessionGrid();
@@ -1321,9 +2173,13 @@
 
     function executeMidiAction(targetId, value) {
       if (targetId === 'global_play') {
-        toggleGlobalPlay();
+        triggerGlobalPlay();
+      } else if (targetId === 'global_pause') {
+        triggerGlobalPause();
       } else if (targetId === 'global_stop') {
-        handleGlobalStop();
+        triggerGlobalStop();
+      } else if (targetId === 'playlist_mode_toggle') {
+        togglePlaylistMode();
       } else if (targetId === 'master_vol') {
         changeMasterVolume(value);
         const fader = document.querySelector(`input[data-midi-target="master_vol"]`);
@@ -1360,15 +2216,23 @@
     }
 
     function createNewProject() {
-      showCustomConfirm("Buat project baru?", "Semua konfigurasi track yang belum disimpan akan dikosongkan.", () => {
+      showCustomConfirm("Buat project baru?", "Semua konfigurasi track dan playlist yang belum disimpan akan dikosongkan.", () => {
         stopAllTracks();
+        isPlaylistModeActive = false;
+        playlistState = { isRunning: false, isPaused: false, currentIndex: -1, selectedModalRow: -1, selectedAvailableClip: null, delayTimer: null, delayRemaining: 0, delayInterval: null };
         project = JSON.parse(JSON.stringify(defaultProject));
         currentFileHandle = null;
         autoSaveSession();
         selectedClipTarget = null;
         document.getElementById('noSelectionMsg').style.display = 'block';
         document.getElementById('propControls').style.display = 'none';
+        document.getElementById('noMarkerSelectionMsg').style.display = 'block';
+        document.getElementById('btnAddMarkerBtn').style.display = 'none';
+        document.getElementById('markerTipMsg').style.display = 'none';
+        document.getElementById('markerChipList').innerHTML = '';
         renderSessionGrid();
+        updateGlobalTransportUI();
+        showToast("New Project", "Project baru telah aktif.", "playlist");
       });
     }
 
@@ -1380,10 +2244,17 @@
         delete project.midiBindings[`track_vol_${track.id}`];
         project.tracks.splice(tIdx, 1);
 
+        // Bersihkan playlist yang merujuk track ini
+        project.playlist.items = project.playlist.items.filter(item => item.trackIndex !== tIdx);
+
         if (selectedClipTarget && selectedClipTarget.trackIndex === tIdx) {
           selectedClipTarget = null;
           document.getElementById('noSelectionMsg').style.display = 'block';
           document.getElementById('propControls').style.display = 'none';
+          document.getElementById('noMarkerSelectionMsg').style.display = 'block';
+          document.getElementById('btnAddMarkerBtn').style.display = 'none';
+          document.getElementById('markerTipMsg').style.display = 'none';
+          document.getElementById('markerChipList').innerHTML = '';
         }
         autoSaveSession();
         renderSessionGrid();
@@ -1406,7 +2277,8 @@
         endTime: decoded.duration,
         isLoop: false,
         disabled: false,
-        gainDb: 0 // Default gain 0 dB
+        gainDb: 0,
+        markers: []
       };
     }
 
@@ -1429,6 +2301,7 @@
       autoSaveSession();
       selectClipForInspection(startTIdx, startSIdx);
       renderSessionGrid();
+      showToast("Audio Loaded", `${audioFiles.length} file ditambahkan ke matrix.`, "playlist");
     }
 
     function renderSessionGrid() {
@@ -1463,6 +2336,10 @@
               selectedClipTarget = null;
               document.getElementById('noSelectionMsg').style.display = 'block';
               document.getElementById('propControls').style.display = 'none';
+              document.getElementById('noMarkerSelectionMsg').style.display = 'block';
+              document.getElementById('btnAddMarkerBtn').style.display = 'none';
+              document.getElementById('markerTipMsg').style.display = 'none';
+              document.getElementById('markerChipList').innerHTML = '';
             }
             autoSaveSession();
             renderSessionGrid();
@@ -1527,6 +2404,7 @@
             slot.className = `clip-slot ${isSelected ? 'selected' : ''} ${isTrackPlaying ? 'playing' : ''} ${isMissing ? 'missing' : ''} ${clip.disabled ? 'disabled' : ''}`;
 
             const gainBadge = (clip.gainDb && clip.gainDb > 0) ? ` [+${clip.gainDb.toFixed(1)}dB]` : '';
+            const markerBadge = (clip.markers && clip.markers.length > 0) ? ` 🚩${clip.markers.length}` : '';
 
             slot.innerHTML = `
               <button class="clip-trigger-btn" onclick="toggleClipPlay(event, ${tIdx}, ${sIdx})">
@@ -1534,7 +2412,7 @@
               </button>
               <div class="clip-info">
                 <span class="clip-title" title="${clip.fileName}">${clip.fileName}</span>
-                <span class="clip-badge">${clip.disabled ? '🚫 Nonaktif' : (isMissing ? '⚠️ Missing' : (clip.isLoop ? '🔁 ' : '') + clip.duration.toFixed(1) + 's' + gainBadge)}</span>
+                <span class="clip-badge">${clip.disabled ? '🚫 Nonaktif' : (isMissing ? '⚠️ Missing' : (clip.isLoop ? '🔁 ' : '') + clip.duration.toFixed(1) + 's' + gainBadge + markerBadge)}</span>
               </div>
               <button class="slot-menu-btn" onclick="openSlotMenu(event, ${tIdx}, ${sIdx})" title="Opsi Slot">⋮</button>
             `;
@@ -1746,40 +2624,14 @@
         selectedClipTarget = null;
         document.getElementById('noSelectionMsg').style.display = 'block';
         document.getElementById('propControls').style.display = 'none';
+        document.getElementById('noMarkerSelectionMsg').style.display = 'block';
+        document.getElementById('btnAddMarkerBtn').style.display = 'none';
+        document.getElementById('markerTipMsg').style.display = 'none';
+        document.getElementById('markerChipList').innerHTML = '';
       }
       autoSaveSession();
       renderSessionGrid();
       contextMenu.style.display = 'none';
-    }
-
-    function showModal(title, bodyHtml, footerHtml) {
-      document.getElementById('modalTitle').innerHTML = title;
-      document.getElementById('modalBody').innerHTML = bodyHtml;
-      if (footerHtml) {
-        document.getElementById('modalFooter').innerHTML = footerHtml;
-      } else {
-        document.getElementById('modalFooter').innerHTML = `<button onclick="closeModal()">Tutup</button>`;
-      }
-      document.getElementById('customModal').style.display = 'flex';
-    }
-
-    function closeModal() {
-      document.getElementById('customModal').style.display = 'none';
-    }
-
-    function showCustomConfirm(title, message, onConfirm) {
-      showModal(
-        `⚠️ ${title}`,
-        `<p>${message}</p>`,
-        `
-          <button onclick="closeModal()">Batal</button>
-          <button class="btn-accent" id="confirmModalBtn">Lanjutkan</button>
-        `
-      );
-      document.getElementById('confirmModalBtn').onclick = () => {
-        closeModal();
-        onConfirm();
-      };
     }
 
     function changeVolume(tIdx, val) {
@@ -1865,11 +2717,12 @@
         masterFillEl.style.height = '0%';
       }
 
+      updateGlobalTransportUI();
       requestAnimationFrame(updateVUMeters);
     }
     requestAnimationFrame(updateVUMeters);
 
-    // Inspector Waveform & Clip Gain Handlers
+    // Inspector Waveform, Marker & Clip Gain Handlers
     function selectClipForInspection(tIdx, sIdx) {
       if (isMidiMode) return;
       const track = project.tracks[tIdx];
@@ -1879,6 +2732,8 @@
         renderSessionGrid();
         return;
       }
+
+      if (!clip.markers) clip.markers = [];
 
       selectedClipTarget = { trackIndex: tIdx, slotIndex: sIdx, clip };
       renderSessionGrid();
@@ -1895,9 +2750,131 @@
       document.getElementById('propEnd').value = clip.endTime.toFixed(2);
       document.getElementById('propLoop').checked = clip.isLoop;
 
+      document.getElementById('noMarkerSelectionMsg').style.display = 'none';
+      document.getElementById('btnAddMarkerBtn').style.display = 'inline-flex';
+      document.getElementById('markerTipMsg').style.display = 'block';
+      renderMarkerChips();
+
       const isMissing = !audioBufferCache.has(clip.fileName);
       document.getElementById('relocateWrap').style.display = isMissing ? 'block' : 'none';
       document.getElementById('waveformStatus').innerText = `Inspecting: ${clip.fileName} [${track.name} - Slot ${sIdx+1}]`;
+    }
+
+    function renderMarkerChips() {
+      const container = document.getElementById('markerChipList');
+      if (!container || !selectedClipTarget || !selectedClipTarget.clip) return;
+      const { clip } = selectedClipTarget;
+      container.innerHTML = '';
+
+      if (!clip.markers || clip.markers.length === 0) {
+        container.innerHTML = `<span style="font-size:0.72rem; color:var(--text-muted); padding: 4px 0;">Belum ada marker pada klip ini.</span>`;
+        return;
+      }
+
+      clip.markers.sort((a, b) => a.time - b.time);
+
+      clip.markers.forEach((m, idx) => {
+        const chip = document.createElement('div');
+        chip.className = 'marker-chip';
+        chip.title = `Klik untuk jump seek ke ${m.time.toFixed(1)}s`;
+        chip.innerHTML = `
+          <div class="marker-chip-info">
+            <span class="marker-chip-label">🚩 ${m.label}</span>
+            <span style="color:var(--text-muted); font-size:0.68rem;">(${m.time.toFixed(1)}s)</span>
+          </div>
+          <div class="marker-chip-actions">
+            <span style="opacity:0.7;" onclick="renameMarkerCustomPrompt(event, ${idx})" title="Rename Label">✏️</span>
+            <span class="chip-del" onclick="deleteMarker(event, ${idx})" title="Hapus Marker">✕</span>
+          </div>
+        `;
+        chip.onclick = (e) => {
+          if (!e.target.classList.contains('chip-del') && !e.target.innerText.includes('✏️')) {
+            seekToMarkerTime(m.time);
+          }
+        };
+        container.appendChild(chip);
+      });
+    }
+
+    function addMarkerAtCurrentPos() {
+      if (!selectedClipTarget || !selectedClipTarget.clip) return;
+      const { clip, trackIndex } = selectedClipTarget;
+      if (!clip.markers) clip.markers = [];
+
+      const track = project.tracks[trackIndex];
+      const nodes = trackAudioNodes.get(track.id);
+
+      let cur = 0;
+      if (nodes && nodes.clip === clip) {
+        if (nodes.isPlaying) {
+          const elapsed = audioContext.currentTime - nodes.startCtxTime;
+          cur = nodes.startOffset + elapsed;
+          if (clip.isLoop) {
+            const len = clip.endTime - clip.startTime;
+            if (len > 0) cur = clip.startTime + ((nodes.startOffset - clip.startTime + elapsed) % len);
+          }
+        } else {
+          cur = nodes.currentPlayhead || clip.startTime;
+        }
+      } else {
+        cur = clip.startTime;
+      }
+
+      cur = Math.max(0, Math.min(clip.duration, cur));
+      const defaultLabel = `M${clip.markers.length + 1}`;
+
+      clip.markers.push({
+        id: 'm_' + Date.now(),
+        time: parseFloat(cur.toFixed(2)),
+        label: defaultLabel
+      });
+
+      clip.markers.sort((a, b) => a.time - b.time);
+
+      autoSaveSession();
+      renderMarkerChips();
+      renderSessionGrid();
+      showToast("Marker Created", `Bendera ${defaultLabel} ditambahkan pada ${cur.toFixed(1)}s`, "playlist");
+    }
+
+    function renameMarkerCustomPrompt(e, mIdx) {
+      if (e) e.stopPropagation();
+      if (!selectedClipTarget || !selectedClipTarget.clip) return;
+      const marker = selectedClipTarget.clip.markers[mIdx];
+      if (!marker) return;
+
+      openPromptModal("Rename Flag Marker", `Label untuk penanda detik ${marker.time.toFixed(1)}s:`, marker.label, (val) => {
+        if (val && val.trim() !== '') {
+          marker.label = val.trim().substring(0, 10);
+          autoSaveSession();
+          renderMarkerChips();
+          showToast("Marker Renamed", `Label diperbarui menjadi "${marker.label}"`, "playlist");
+        }
+      });
+    }
+
+    function deleteMarker(e, mIdx) {
+      if (e) e.stopPropagation();
+      if (!selectedClipTarget || !selectedClipTarget.clip) return;
+      selectedClipTarget.clip.markers.splice(mIdx, 1);
+      autoSaveSession();
+      renderMarkerChips();
+      renderSessionGrid();
+    }
+
+    function seekToMarkerTime(time) {
+      if (!selectedClipTarget || !selectedClipTarget.clip) return;
+      const { clip, trackIndex, slotIndex } = selectedClipTarget;
+      const track = project.tracks[trackIndex];
+      const nodes = trackAudioNodes.get(track.id);
+
+      const boundedSeekTime = Math.max(0, Math.min(clip.duration, time));
+
+      if (nodes && nodes.isPlaying && nodes.clip === clip) {
+        startClipPlayback(trackIndex, slotIndex, false, boundedSeekTime);
+      } else if (nodes) {
+        nodes.currentPlayhead = boundedSeekTime;
+      }
     }
 
     function updateGainFromSlider(valDb) {
@@ -1906,7 +2883,6 @@
       selectedClipTarget.clip.gainDb = db;
       document.getElementById('propGainLabel').innerText = `+${db.toFixed(1)} dB`;
 
-      // Jika klip sedang berputar, terapkan perubahan penguatan secara real-time
       const track = project.tracks[selectedClipTarget.trackIndex];
       const nodes = trackAudioNodes.get(track.id);
       if (nodes && nodes.isPlaying && nodes.clip === selectedClipTarget.clip && nodes.clipGainNode) {
@@ -1924,7 +2900,6 @@
       const buffer = audioBufferCache.get(clip.fileName);
       if (!buffer) return;
 
-      // Scan peak amplitude gelombang audio
       let peak = 0;
       for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
         const data = buffer.getChannelData(channel);
@@ -1936,10 +2911,9 @@
 
       if (peak <= 0.001) return;
 
-      // Hitung penguatan agar peak menyentuh 0 dB (1.0), dibatasi maksimal +12 dB
       const targetGain = 1.0 / peak;
       let calculatedDb = 20 * Math.log10(targetGain);
-      calculatedDb = Math.max(0, Math.min(12, Math.round(calculatedDb * 2) / 2)); // Bulatkan ke kelipatan 0.5 dB
+      calculatedDb = Math.max(0, Math.min(12, Math.round(calculatedDb * 2) / 2));
 
       clip.gainDb = calculatedDb;
       document.getElementById('propGain').value = calculatedDb;
@@ -1966,8 +2940,8 @@
       renderSessionGrid();
     }
 
-    // Audio Playback Engine dengan Dukungan Independent Clip Gain
-    function startClipPlayback(tIdx, sIdx, resumeFromCurrent = false, explicitOffset = null) {
+    // Audio Playback Engine
+    function startClipPlayback(tIdx, sIdx, resumeFromCurrent = false, explicitOffset = null, customEndTime = null, onEndedCallback = null) {
       initAudio();
       const track = project.tracks[tIdx];
       track.activeSlotIndex = sIdx;
@@ -1990,7 +2964,6 @@
       const source = audioContext.createBufferSource();
       source.buffer = buffer;
 
-      // Rangkaian: BufferSource -> Clip Gain Node (Penguat Klip Mandiri) -> Track Gain Node
       const clipGainNode = audioContext.createGain();
       const gainDb = clip.gainDb || 0;
       clipGainNode.gain.value = Math.pow(10, gainDb / 20);
@@ -2008,9 +2981,10 @@
         nodes.currentPlayhead = clip.startTime;
       }
 
-      const remainDuration = Math.max(0.01, clip.endTime - startPos);
+      const effectiveEndTime = (customEndTime !== null) ? customEndTime : clip.endTime;
+      const remainDuration = Math.max(0.01, effectiveEndTime - startPos);
 
-      if (clip.isLoop) {
+      if (clip.isLoop && !isPlaylistModeActive) {
         source.loop = true;
         source.loopStart = clip.startTime;
         source.loopEnd = clip.endTime;
@@ -2022,6 +2996,9 @@
             nodes.isPlaying = false;
             nodes.currentPlayhead = clip.startTime;
             renderSessionGrid();
+            if (onEndedCallback) {
+              onEndedCallback();
+            }
           }
         };
       }
@@ -2041,7 +3018,7 @@
         const elapsed = audioContext.currentTime - nodes.startCtxTime;
         const clip = nodes.clip;
         if (clip) {
-          if (clip.isLoop) {
+          if (clip.isLoop && !isPlaylistModeActive) {
             const loopLen = clip.endTime - clip.startTime;
             nodes.currentPlayhead = clip.startTime + ((nodes.startOffset - clip.startTime + elapsed) % loopLen);
           } else {
@@ -2094,15 +3071,6 @@
       renderSessionGrid();
     }
 
-    function handleGlobalStop() {
-      if (isAnyTrackPlaying()) {
-        project.tracks.forEach((_, tIdx) => pauseTrackHold(tIdx));
-      } else {
-        project.tracks.forEach((_, tIdx) => rewindTrackToStart(tIdx));
-      }
-      renderSessionGrid();
-    }
-
     function stopAllTracks() {
       project.tracks.forEach((_, tIdx) => {
         pauseTrackHold(tIdx);
@@ -2115,7 +3083,11 @@
       if (e.code === 'Space') {
         if (e.target.tagName === 'INPUT' || e.target.isContentEditable) return;
         e.preventDefault();
-        toggleGlobalPlay();
+        if (isAnyTrackPlaying()) {
+          triggerGlobalPause();
+        } else {
+          triggerGlobalPlay();
+        }
       }
       if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
         e.preventDefault();
@@ -2177,23 +3149,55 @@
       renderSessionGrid();
     }
 
-    // Waveform Canvas Rendering & Unified Pointer / Touch Events
+    // Waveform Canvas Rendering & Unified Pointer
     const canvas = document.getElementById('waveformCanvas');
     const ctx = canvas.getContext('2d');
 
     function getCanvasCoordinates(e) {
       const rect = canvas.getBoundingClientRect();
       let clientX = e.clientX;
+      let clientY = e.clientY;
       if (e.touches && e.touches.length > 0) {
         clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
       }
-      return Math.max(0, Math.min(canvas.width, clientX - rect.left));
+      return {
+        x: Math.max(0, Math.min(canvas.width, clientX - rect.left)),
+        y: Math.max(0, Math.min(canvas.height, clientY - rect.top))
+      };
+    }
+
+    function getMarkerHitAtPosition(clickX, clickY, clip) {
+      if (!clip.markers || clip.markers.length === 0 || clickY > 22) return -1;
+      ctx.font = 'bold 10px sans-serif';
+
+      for (let i = 0; i < clip.markers.length; i++) {
+        const m = clip.markers[i];
+        const mX = (m.time / clip.duration) * canvas.width;
+        const textStr = (m.label || '').substring(0, 10);
+        const textWidth = ctx.measureText(textStr).width;
+        const flagWidth = Math.max(28, textWidth + 14);
+
+        if (clickX >= mX - 4 && clickX <= mX + flagWidth + 4) {
+          return i;
+        }
+      }
+      return -1;
     }
 
     function handlePointerDown(e) {
       if (!selectedClipTarget || !selectedClipTarget.clip) return;
       const { clip, trackIndex } = selectedClipTarget;
-      const clickX = getCanvasCoordinates(e);
+      const coords = getCanvasCoordinates(e);
+      const clickX = coords.x;
+      const clickY = coords.y;
+
+      const hitMarkerIdx = getMarkerHitAtPosition(clickX, clickY, clip);
+      if (hitMarkerIdx !== -1) {
+        seekToMarkerTime(clip.markers[hitMarkerIdx].time);
+        return;
+      }
+
       const startX = (clip.startTime / clip.duration) * canvas.width;
       const endX = (clip.endTime / clip.duration) * canvas.width;
 
@@ -2216,11 +3220,21 @@
       }
     }
 
+    canvas.addEventListener('dblclick', (e) => {
+      if (!selectedClipTarget || !selectedClipTarget.clip) return;
+      const { clip } = selectedClipTarget;
+      const coords = getCanvasCoordinates(e);
+      const hitMarkerIdx = getMarkerHitAtPosition(coords.x, coords.y, clip);
+      if (hitMarkerIdx !== -1) {
+        renameMarkerCustomPrompt(null, hitMarkerIdx);
+      }
+    });
+
     function handlePointerMove(e) {
       if (!draggingHandle || !selectedClipTarget) return;
       const { clip } = selectedClipTarget;
-      const x = getCanvasCoordinates(e);
-      const newTime = (x / canvas.width) * clip.duration;
+      const coords = getCanvasCoordinates(e);
+      const newTime = (coords.x / canvas.width) * clip.duration;
 
       if (draggingHandle === 'start') {
         clip.startTime = Math.min(newTime, clip.endTime - 0.2);
@@ -2316,7 +3330,42 @@
           ctx.fillStyle = '#f85149';
           ctx.fillRect(endX - 6, canvas.height - 20, 12, 20);
 
-          // Playhead
+          // Waveform Markers
+          if (clip.markers && clip.markers.length > 0) {
+            ctx.font = 'bold 10px sans-serif';
+
+            clip.markers.forEach((m) => {
+              const mX = (m.time / clip.duration) * canvas.width;
+              const textStr = (m.label || '').substring(0, 10);
+              const textWidth = ctx.measureText(textStr).width;
+              const flagWidth = Math.max(28, textWidth + 14);
+              const flagHeight = 18;
+
+              ctx.strokeStyle = '#58a6ff';
+              ctx.lineWidth = 1.5;
+              ctx.setLineDash([4, 2]);
+              ctx.beginPath();
+              ctx.moveTo(mX, 0);
+              ctx.lineTo(mX, canvas.height);
+              ctx.stroke();
+              ctx.setLineDash([]);
+
+              ctx.fillStyle = '#58a6ff';
+              ctx.beginPath();
+              ctx.moveTo(mX, 0);
+              ctx.lineTo(mX + flagWidth, 0);
+              ctx.lineTo(mX + flagWidth - 5, flagHeight / 2);
+              ctx.lineTo(mX + flagWidth, flagHeight);
+              ctx.lineTo(mX, flagHeight);
+              ctx.closePath();
+              ctx.fill();
+
+              ctx.fillStyle = '#0d1015';
+              ctx.fillText(textStr, mX + 4, 13);
+            });
+          }
+
+          // Playhead Putih Realtime
           const track = project.tracks[trackIndex];
           const nodes = trackAudioNodes.get(track.id);
 
@@ -2325,7 +3374,7 @@
             if (nodes.isPlaying) {
               const elapsed = audioContext.currentTime - nodes.startCtxTime;
               cur = nodes.startOffset + elapsed;
-              if (clip.isLoop) {
+              if (clip.isLoop && !isPlaylistModeActive) {
                 const len = clip.endTime - clip.startTime;
                 if (len > 0) cur = clip.startTime + ((nodes.startOffset - clip.startTime + elapsed) % len);
               }
@@ -2341,7 +3390,9 @@
             ctx.lineTo(playX, canvas.height);
             ctx.stroke();
 
-            document.getElementById('timecodeDisplay').innerText = `${cur.toFixed(2)}s / ${clip.duration.toFixed(2)}s`;
+            // Ganti baris penulisan timecodeDisplay di drawWaveformStage menjadi:
+             const remainTime = Math.max(0, clip.duration - cur);
+             document.getElementById('timecodeDisplay').innerText = `${cur.toFixed(2)}s / ${clip.duration.toFixed(2)}s (Sisa: -${remainTime.toFixed(2)}s)`;
           } else {
             document.getElementById('timecodeDisplay').innerText = `0.00s / ${clip.duration.toFixed(2)}s`;
           }
@@ -2352,17 +3403,352 @@
     }
     requestAnimationFrame(drawWaveformStage);
 
-    // Save & Save As Management
+    // ==========================================
+    // Unified Matrix-Linked Playlist Engine
+    // ==========================================
+    function openPlaylistSetupModal() {
+      if (!project.playlist) {
+        project.playlist = { items: [], loop: false, manual: false, beginSelected: false };
+      }
+      document.getElementById('chkPlaylistLoop').checked = !!project.playlist.loop;
+      document.getElementById('chkPlaylistManual').checked = !!project.playlist.manual;
+      document.getElementById('chkPlaylistBeginSelected').checked = !!project.playlist.beginSelected;
+
+      renderAvailableClipsList();
+      renderPlaylistQueueTable();
+
+      document.getElementById('playlistModal').style.display = 'flex';
+    }
+
+    function closePlaylistSetupModal() {
+      document.getElementById('playlistModal').style.display = 'none';
+    }
+
+    function updatePlaylistOptions() {
+      project.playlist.loop = document.getElementById('chkPlaylistLoop').checked;
+      project.playlist.manual = document.getElementById('chkPlaylistManual').checked;
+      project.playlist.beginSelected = document.getElementById('chkPlaylistBeginSelected').checked;
+      autoSaveSession();
+    }
+
+    // Mengambil semua klip aktif lengkap dengan koordinat track & slot
+    function getMatrixActiveClipsWithLocation() {
+      const list = [];
+      project.tracks.forEach((track, tIdx) => {
+        track.clips.forEach((clip, sIdx) => {
+          if (clip && !clip.disabled && clip.fileName) {
+            list.push({
+              trackIndex: tIdx,
+              slotIndex: sIdx,
+              trackName: track.name,
+              clip: clip
+            });
+          }
+        });
+      });
+      return list;
+    }
+
+    function renderAvailableClipsList() {
+      const container = document.getElementById('availableClipList');
+      const countEl = document.getElementById('availCount');
+      container.innerHTML = '';
+
+      const items = getMatrixActiveClipsWithLocation();
+      countEl.innerText = `${items.length} clips`;
+
+      if (items.length === 0) {
+        container.innerHTML = `<li style="padding:10px; color:var(--text-muted); font-size:0.75rem;">Belum ada file audio di matrix. Silakan drop/upload file terlebih dahulu.</li>`;
+        return;
+      }
+
+      items.forEach(item => {
+        const li = document.createElement('li');
+        const isSel = (playlistState.selectedAvailableClip === item);
+        li.className = `vmix-input-item ${isSel ? 'selected' : ''}`;
+        li.innerHTML = `
+          <div>
+            <span style="font-weight:600;">📁 ${item.clip.fileName}</span>
+            <span style="color:var(--gold); font-size:0.65rem; display:block;">[${item.trackName} - Slot ${item.slotIndex + 1}]</span>
+          </div>
+          <span style="color:var(--text-muted); font-size:0.68rem;">${item.clip.duration.toFixed(1)}s</span>
+        `;
+        li.onclick = () => {
+          playlistState.selectedAvailableClip = item;
+          renderAvailableClipsList();
+        };
+        li.ondblclick = () => {
+          playlistState.selectedAvailableClip = item;
+          moveSelectedToQueue();
+        };
+        container.appendChild(li);
+      });
+    }
+
+    function moveSelectedToQueue() {
+  if (!playlistState.selectedAvailableClip) {
+    showToast("Pilih Audio", "Klik salah satu audio di kolom kiri untuk dimasukkan ke antrean.", "warn");
+    return;
+  }
+  const item = playlistState.selectedAvailableClip;
+
+  project.playlist.items.push({
+    id: 'pl_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+    trackIndex: item.trackIndex,
+    slotIndex: item.slotIndex,
+    fileName: item.clip.fileName,
+    startIn: item.clip.startTime || 0,
+    endOut: item.clip.endTime || item.clip.duration,
+    duration: item.clip.duration,
+    delay: 0
+  });
+
+  autoSaveSession();
+  renderPlaylistQueueTable();
+  showToast("Ditambahkan", `${item.clip.fileName} masuk antrean playlist.`, "playlist");
+}
+
+    function removeSelectedFromQueue(idx = null) {
+      const targetIdx = (idx !== null) ? idx : playlistState.selectedModalRow;
+      if (targetIdx === null || targetIdx < 0 || targetIdx >= project.playlist.items.length) {
+        showToast("Pilih Baris", "Pilih baris pada tabel playlist yang ingin dikeluarkan.", "warn");
+        return;
+      }
+
+      project.playlist.items.splice(targetIdx, 1);
+      playlistState.selectedModalRow = -1;
+      autoSaveSession();
+      renderPlaylistQueueTable();
+    }
+
+    function clearCurrentPlaylist() {
+      showCustomConfirm("Kosongkan Playlist?", "Semua urutan playlist akan dihapus.", () => {
+        project.playlist.items = [];
+        playlistState.selectedModalRow = -1;
+        autoSaveSession();
+        renderPlaylistQueueTable();
+        showToast("Playlist Kosong", "Semua antrean dihapus.", "playlist");
+      });
+    }
+
+    // Render Tabel Queue Playlist dengan Indikator Aktif
+    function renderPlaylistQueueTable() {
+      const tbody = document.getElementById('playlistQueueBody');
+      const statusEl = document.getElementById('queueStatus');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const items = project.playlist.items;
+      statusEl.innerText = `${items.length} items`;
+
+      if (items.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:16px; color:var(--text-muted);">Antrean masih kosong. Klik klip di sebelah kiri lalu tekan tombol [ ❯ ].</td></tr>`;
+        return;
+      }
+
+      items.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        const isSelected = (playlistState.selectedModalRow === idx);
+        const isPlaying = (isPlaylistModeActive && isAnyTrackPlaying() && playlistState.currentIndex === idx);
+
+        tr.className = `vmix-queue-row ${isSelected ? 'selected' : ''} ${isPlaying ? 'active-playing' : ''}`;
+        
+        const trackObj = project.tracks[item.trackIndex];
+        const trackLabel = trackObj ? `${trackObj.name} - Slot ${item.slotIndex + 1}` : 'Unknown';
+
+        tr.innerHTML = `
+          <td>${isPlaying ? '<span style="color:var(--green-bright); font-size:0.8rem;">▶</span>' : (idx + 1)}</td>
+          <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${item.fileName}">
+            <span style="font-weight:600;">${item.fileName}</span>
+            <span style="color:var(--text-muted); font-size:0.65rem; display:block;">[${trackLabel}]</span>
+          </td>
+          <td><input type="number" class="vmix-table-input" step="0.5" min="0" value="${item.startIn.toFixed(1)}" onchange="updateQueueItem(${idx}, 'startIn', this.value)"></td>
+          <td><input type="number" class="vmix-table-input" step="0.5" min="0" value="${item.endOut.toFixed(1)}" onchange="updateQueueItem(${idx}, 'endOut', this.value)"></td>
+          <td><input type="number" class="vmix-table-input" step="1" min="0" value="${item.delay}" onchange="updateQueueItem(${idx}, 'delay', this.value)"></td>
+          <td><button style="padding:1px 5px; color:var(--danger); border:none; background:transparent;" onclick="removeSelectedFromQueue(${idx})" title="Hapus">✕</button></td>
+        `;
+
+        tr.onclick = (e) => {
+          if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+            playlistState.selectedModalRow = idx;
+            renderPlaylistQueueTable();
+          }
+        };
+
+        tr.ondblclick = () => {
+          playlistState.selectedModalRow = idx;
+          isPlaylistModeActive = true;
+          jumpPlayQueueItem(idx);
+        };
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateQueueItem(idx, field, val) {
+      const item = project.playlist.items[idx];
+      if (!item) return;
+
+      const num = parseFloat(val) || 0;
+      if (field === 'startIn') item.startIn = Math.max(0, num);
+      if (field === 'endOut') item.endOut = Math.max(item.startIn + 0.2, Math.min(item.duration, num));
+      if (field === 'delay') item.delay = Math.max(0, num);
+
+      autoSaveSession();
+      renderPlaylistQueueTable();
+    }
+
+    function startPlaylistFromModal() {
+      isPlaylistModeActive = true;
+      if (project.playlist.beginSelected && playlistState.selectedModalRow !== -1) {
+        jumpPlayQueueItem(playlistState.selectedModalRow);
+      } else {
+        triggerGlobalPlay();
+      }
+    }
+
+    function jumpPlayQueueItem(idx) {
+      initAudio();
+      if (idx < 0 || idx >= project.playlist.items.length) return;
+
+      if (playlistState.delayTimer) {
+        clearTimeout(playlistState.delayTimer);
+        playlistState.delayTimer = null;
+      }
+      if (playlistState.delayInterval) {
+        clearInterval(playlistState.delayInterval);
+        playlistState.delayInterval = null;
+      }
+      playlistState.delayRemaining = 0;
+
+      // Hentikan audio yang sedang berjalan sebelumnya
+      project.tracks.forEach((_, tIdx) => pauseTrackHold(tIdx));
+
+      playlistState.currentIndex = idx;
+      playlistState.isRunning = true;
+      playlistState.isPaused = false;
+      playQueueIndex(idx, false);
+      updateGlobalTransportUI();
+    }
+
+    // Memainkan Item Playlist Terhubung Langsung ke Mesin Matrix
+    function playQueueIndex(idx, resume = false) {
+  if (!isPlaylistModeActive) return;
+
+  const items = project.playlist.items;
+  if (idx >= items.length) {
+    if (project.playlist.loop) {
+      playlistState.currentIndex = 0;
+      playQueueIndex(0, false);
+    } else {
+      triggerGlobalStop();
+      showToast("Playlist Finished", "Semua antrean playlist telah selesai.", "playlist");
+    }
+    return;
+  }
+
+  const item = items[idx];
+  playlistState.currentIndex = idx;
+
+  // Fallback: jika trackIndex belum tercatat di data item lama, cari slot aktifnya di project
+  if (item.trackIndex === undefined || item.slotIndex === undefined) {
+    for (let t = 0; t < project.tracks.length; t++) {
+      for (let s = 0; s < project.tracks[t].clips.length; s++) {
+        if (project.tracks[t].clips[s] && project.tracks[t].clips[s].fileName === item.fileName) {
+          item.trackIndex = t;
+          item.slotIndex = s;
+          break;
+        }
+      }
+      if (item.trackIndex !== undefined) break;
+    }
+  }
+
+  if (item.trackIndex === undefined) {
+    showToast("File Missing", `Slot untuk ${item.fileName} tidak ditemukan di matrix.`, "warn");
+    playlistNext();
+    return;
+  }
+
+  // Pilih otomatis klip ini di matrix & tampilkan waveform-nya
+  selectClipForInspection(item.trackIndex, item.slotIndex);
+
+  // Jalankan pemutaran melalui matrix engine
+  startClipPlayback(
+    item.trackIndex, 
+    item.slotIndex, 
+    resume, 
+    resume ? null : item.startIn, 
+    item.endOut,
+    () => {
+      if (!isPlaylistModeActive || playlistState.isPaused) return;
+
+      if (project.playlist.manual) {
+        showToast("Manual Mode", "Klip selesai. Menunggu tombol Next.", "playlist");
+        playlistState.currentIndex = idx + 1;
+        renderPlaylistQueueTable();
+        return;
+      }
+
+      const delaySec = item.delay || 0;
+      if (delaySec > 0) {
+        playlistState.delayRemaining = delaySec;
+        showToast("Delay Interval", `Menunggu jeda ${delaySec} detik...`, "playlist");
+
+        playlistState.delayInterval = setInterval(() => {
+          playlistState.delayRemaining--;
+          if (playlistState.delayRemaining <= 0) {
+            clearInterval(playlistState.delayInterval);
+            playlistState.delayInterval = null;
+          }
+        }, 1000);
+
+        playlistState.delayTimer = setTimeout(() => {
+          playlistState.currentIndex = idx + 1;
+          playQueueIndex(playlistState.currentIndex, false);
+        }, delaySec * 1000);
+      } else {
+        playlistState.currentIndex = idx + 1;
+        playQueueIndex(playlistState.currentIndex, false);
+      }
+    }
+  );
+
+  renderPlaylistQueueTable();
+  renderSessionGrid();
+  showToast("Playlist Cue", `[#${idx+1}] Memutar: ${item.fileName}`, "playlist");
+}
+
+    function playlistNext() {
+      if (project.playlist.items.length === 0) return;
+      isPlaylistModeActive = true;
+      const nextIdx = playlistState.currentIndex + 1;
+      if (nextIdx < project.playlist.items.length || project.playlist.loop) {
+        jumpPlayQueueItem(nextIdx % project.playlist.items.length);
+      } else {
+        triggerGlobalStop();
+      }
+    }
+
+    function playlistPrevious() {
+      if (project.playlist.items.length === 0) return;
+      isPlaylistModeActive = true;
+      const prevIdx = Math.max(0, playlistState.currentIndex - 1);
+      jumpPlayQueueItem(prevIdx);
+    }
+
+    // Save & Load Project JSON
     async function saveProject(forceSaveAs = false) {
       document.getElementById('fileDropdownMenu').classList.remove('show');
 
       const exportData = {
         appName: 'Ramatloka Sora',
-        version: '1.5',
+        version: '2.1',
         exportedAt: new Date().toISOString(),
         sceneNames: project.sceneNames,
         master: project.master,
         tracks: project.tracks,
+        playlist: project.playlist || { items: [], loop: false, manual: false, beginSelected: false },
         midiBindings: project.midiBindings || {}
       };
       const jsonStr = JSON.stringify(exportData, null, 2);
@@ -2382,6 +3768,7 @@
           await writable.write(jsonStr);
           await writable.close();
           autoSaveSession();
+          showToast("Project Saved", "File JSON berhasil disimpan.", "playlist");
           return;
         } catch (err) {
           if (err.name === 'AbortError') return;
@@ -2394,9 +3781,9 @@
       a.download = `ramatloka-sora-session${forceSaveAs ? '-as' : ''}.json`;
       a.click();
       autoSaveSession();
+      showToast("Project Exported", "File JSON telah diunduh.", "playlist");
     }
 
-    // Load Project JSON
     document.getElementById('projectFileInput').addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -2404,10 +3791,20 @@
         const data = JSON.parse(await file.text());
         if (data.tracks) {
           stopAllTracks();
+          isPlaylistModeActive = false;
+          playlistState = { isRunning: false, isPaused: false, currentIndex: -1, selectedModalRow: -1, selectedAvailableClip: null, delayTimer: null, delayRemaining: 0, delayInterval: null };
+          
           project.tracks = data.tracks;
           project.sceneNames = data.sceneNames || project.sceneNames;
           project.master = data.master || { volume: 0.90, pan: 0 };
+          project.playlist = data.playlist || { items: [], loop: false, manual: false, beginSelected: false };
           project.midiBindings = data.midiBindings || {};
+
+          project.tracks.forEach(track => {
+            track.clips.forEach(clip => {
+              if (clip && !clip.markers) clip.markers = [];
+            });
+          });
 
           initAudio();
           initWebMidi();
@@ -2434,6 +3831,7 @@
           selectedClipTarget = null;
           autoSaveSession();
           renderSessionGrid();
+          updateGlobalTransportUI();
 
           const missingFiles = [];
           project.tracks.forEach(track => {
@@ -2455,10 +3853,12 @@
               <p style="margin-top:12px; font-size:0.75rem;">Silakan klik tombol <b>Locate Missing File</b> di panel bawah untuk memuat file audio.</p>
             `;
             showModal("⚠️ Media Files Missing", listHtml);
+          } else {
+            showToast("Project Loaded", "Project dan susunan playlist sukses dimuat.", "playlist");
           }
         }
       } catch (err) {
-        showModal("❌ Kesalahan Format", `<p>File JSON yang Anda pilih rusak atau tidak didukung.</p>`);
+        showToast("Error", "Format JSON rusak atau tidak valid.", "warn");
       }
       e.target.value = '';
     });
@@ -2479,18 +3879,19 @@
       audioBufferCache.set(selectedClipTarget.clip.fileName, decoded);
       
       selectClipForInspection(selectedClipTarget.trackIndex, selectedClipTarget.slotIndex);
+      showToast("File Restored", `${selectedClipTarget.clip.fileName} siap dimainkan.`, "playlist");
       e.target.value = '';
     });
 
     restoreSession();
-  // Pendaftaran Service Worker PWA
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('Service Worker PWA aktif:', reg.scope))
-        .catch(err => console.warn('Service Worker PWA gagal:', err));
-    });
-  }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Service Worker PWA aktif:', reg.scope))
+          .catch(err => console.warn('Service Worker PWA gagal:', err));
+      });
+    }
   </script>
 </body>
 </html>
