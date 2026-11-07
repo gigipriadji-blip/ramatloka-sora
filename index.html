@@ -2574,7 +2574,7 @@
 
         col.appendChild(slotsCont);
 
-        // Track Mixer Strip
+        // Track Mixer Strip (DIperbaiki: menggunakan fader track audio yang benar)
         const volMidiTarget = `track_vol_${track.id}`;
         const isVolAssigned = !!project.midiBindings[volMidiTarget];
         const isVolSelected = selectedMidiTarget === volMidiTarget;
@@ -2597,17 +2597,16 @@
           </div>
 
           <div class="fader-vu-section">
-          <!-- Ganti juga bagian div vertical-fader-wrap dan input Master di bawah ini -->
-          <div class="vertical-fader-wrap" onclick="if(isMidiMode) handleMidiTargetClick('master_vol')" style="cursor: ${isMidiMode ? 'pointer' : 'default'};">
-            <input type="range" class="vertical-fader midi-mappable ${isMasterVolAssigned ? 'midi-assigned' : ''} ${isMasterVolSelected ? 'midi-selected' : ''}" 
-              data-midi-target="master_vol" 
-              min="0" max="1" step="0.01" value="${project.master.volume}" 
-              oninput="changeMasterVolume(this.value)">
+            <div class="vertical-fader-wrap" onclick="if(isMidiMode) handleMidiTargetClick('${volMidiTarget}')" style="cursor: ${isMidiMode ? 'pointer' : 'default'};">
+              <input type="range" class="vertical-fader midi-mappable ${isVolAssigned ? 'midi-assigned' : ''} ${isVolSelected ? 'midi-selected' : ''}" 
+                data-midi-target="${volMidiTarget}" 
+                min="0" max="1" step="0.01" value="${track.volume}" 
+                oninput="changeVolume(${tIdx}, this.value)">
+            </div>
+            <div class="vu-meter-column">
+              <div class="vu-fill" id="vu-fill-${track.id}"></div>
+            </div>
           </div>
-          <div class="vu-meter-column">
-            <div class="vu-fill" id="vu-fill-master"></div>
-          </div>
-        </div>
         `;
         col.appendChild(mixer);
 
@@ -2675,7 +2674,6 @@
         </div>
 
         <div class="fader-vu-section">
-          <!-- Ganti juga bagian div vertical-fader-wrap dan input Master di bawah ini -->
           <div class="vertical-fader-wrap" onclick="if(isMidiMode) handleMidiTargetClick('master_vol')" style="cursor: ${isMidiMode ? 'pointer' : 'default'};">
             <input type="range" class="vertical-fader midi-mappable ${isMasterVolAssigned ? 'midi-assigned' : ''} ${isMasterVolSelected ? 'midi-selected' : ''}" 
               data-midi-target="master_vol" 
