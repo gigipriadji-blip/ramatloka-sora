@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ramatloka-sora-v13';
+const CACHE_NAME = 'ramatloka-sora-v13.1';
 const PRECACHE_ASSETS = [
   './',
   './index.html',

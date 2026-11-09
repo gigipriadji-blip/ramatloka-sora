@@ -48,7 +48,6 @@
       overflow: hidden;
     }
 
-    /* Top Transport Header */
     header {
       background-color: var(--bg-panel);
       border-bottom: 1px solid var(--border);
@@ -75,7 +74,6 @@
       text-transform: uppercase;
     }
 
-    /* Project Title Pill Badge */
     .project-name-badge {
       display: inline-flex;
       align-items: center;
@@ -156,7 +154,6 @@
       color: var(--danger);
     }
 
-    /* Timecode HUD Display */
     .timecode-lcd {
       background: #080b0f;
       border: 1px solid #27303d;
@@ -190,7 +187,6 @@
       gap: 6px;
     }
 
-    /* Playlist Switcher Button */
     .playlist-trigger-group {
       display: flex;
       align-items: center;
@@ -280,7 +276,6 @@
       box-shadow: 0 0 10px rgba(56, 139, 253, 0.5);
     }
 
-    /* Menu Dropdown File Header */
     .dropdown-container {
       position: relative;
       display: inline-block;
@@ -344,7 +339,6 @@
       fill: var(--text-main);
     }
 
-    /* MIDI Mode Visuals */
     body.midi-mode-active .midi-mappable {
       outline: 2px dashed var(--midi-color) !important;
       outline-offset: 1px;
@@ -361,7 +355,6 @@
       background-color: rgba(56, 139, 253, 0.25) !important;
     }
 
-    /* Middle Area: Session Matrix View */
     .session-view {
       flex: 1;
       background-color: var(--bg-darkest);
@@ -470,7 +463,6 @@
       border-radius: 3px;
     }
 
-    /* Clip Slot (Ableton Style Color Coding Support) */
     .clip-slot {
       height: 48px;
       min-height: 48px;
@@ -590,7 +582,6 @@
       background: transparent;
     }
 
-    /* Master Scene Slot */
     .scene-slot {
       height: 48px;
       min-height: 48px;
@@ -604,6 +595,16 @@
       gap: 6px;
       flex-shrink: 0;
       transition: background-color 0.12s, border-color 0.12s;
+      cursor: grab;
+    }
+
+    .scene-slot:active {
+      cursor: grabbing;
+    }
+
+    .scene-slot.scene-drag-over {
+      border: 2px dashed var(--gold) !important;
+      background-color: #2b394e !important;
     }
 
     .scene-title-input {
@@ -624,7 +625,6 @@
       border-color: var(--gold);
     }
 
-    /* Sticky Bottom Mixer Strip */
     .track-mixer {
       margin-top: auto;
       border-top: 1px solid var(--border);
@@ -743,7 +743,6 @@
       transition: height 0.05s ease-out;
     }
 
-    /* Bottom: Waveform View (3 Kolom Berdampingan) */
     .detail-view {
       height: 235px;
       min-height: 235px;
@@ -836,7 +835,6 @@
       cursor: pointer;
     }
 
-    /* Marker List Container */
     .marker-list {
       display: flex;
       flex-direction: column;
@@ -907,7 +905,6 @@
       color: #ff7b72;
     }
 
-    /* Waveform Stage */
     .waveform-stage {
       flex: 1;
       display: flex;
@@ -924,6 +921,40 @@
       color: var(--text-muted);
     }
 
+    .waveform-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 60%;
+      overflow: hidden;
+    }
+
+    .file-path-badge {
+      background: #11161d;
+      border: 1px solid #28303d;
+      border-radius: 3px;
+      padding: 2px 6px;
+      font-size: 0.68rem;
+      color: var(--gold);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: help;
+    }
+
+    .waveform-zoom-controls {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .zoom-btn {
+      padding: 2px 6px;
+      font-size: 0.7rem;
+      background: #18202a;
+      border-color: #303b4b;
+    }
+
     .canvas-container {
       flex: 1;
       background-color: #0b0e14;
@@ -931,17 +962,25 @@
       border-radius: 4px;
       position: relative;
       cursor: crosshair;
-      overflow: hidden;
+      overflow-x: auto;
+      overflow-y: hidden;
       touch-action: none;
     }
 
+    .canvas-container::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .canvas-container::-webkit-scrollbar-thumb {
+      background: var(--gold);
+      border-radius: 3px;
+    }
+
     canvas {
-      width: 100%;
       height: 100%;
       display: block;
     }
 
-    /* Context Menu */
     .custom-context-menu {
       position: fixed;
       display: none;
@@ -950,7 +989,7 @@
       border-radius: 6px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
       z-index: 1000;
-      min-width: 165px;
+      min-width: 175px;
       padding: 4px 0;
     }
 
@@ -973,7 +1012,6 @@
       color: var(--danger);
     }
 
-    /* Color Palette Picker Popover */
     .color-picker-popover {
       position: fixed;
       display: none;
@@ -1014,7 +1052,6 @@
       color: var(--gold);
     }
 
-    /* Floating Toast HUD Notification System */
     #toastContainer {
       position: fixed;
       top: 60px;
@@ -1063,7 +1100,6 @@
       border-left: 4px solid var(--danger);
     }
 
-    /* Modal System */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -1132,7 +1168,6 @@
       align-items: center;
     }
 
-    /* vMix Style Playlist Modal Layout */
     .vmix-playlist-stage {
       display: flex;
       gap: 12px;
@@ -1324,22 +1359,18 @@
 </head>
 <body>
 
-  <!-- Floating Toast HUD Container -->
   <div id="toastContainer"></div>
 
-  <!-- Top Global Header -->
   <header>
     <div class="brand-group">
       <span class="brand-title">Ramatloka Sora</span>
       <span style="font-size: 0.75rem; color: var(--text-muted);">|</span>
-      <!-- Project Name Active Display -->
       <div class="project-name-badge" onclick="renameCurrentProjectPrompt()" title="Klik untuk mengubah nama project ini">
         <span>📁</span>
         <span class="project-name-text" id="activeProjectTitle">Untitled Session</span>
       </div>
     </div>
 
-    <!-- DAW Global Transport & Digital Timer HUD -->
     <div class="global-transport">
       <button class="transport-btn btn-play-global midi-mappable" id="globalPlayBtn" data-midi-target="global_play" onclick="handlePlayClick(event)" title="Play / Resume (Spacebar)">
         ▶
@@ -1351,7 +1382,6 @@
         ⏹
       </button>
 
-      <!-- Digital Timer LCD HUD (Elapsed / Remaining) -->
       <div class="timecode-lcd">
         <span class="timecode-lcd-main" id="globalTimerLcd">00:00.0 / -00:00.0</span>
         <span class="timecode-lcd-sub" id="globalTimerSub">MATRIX STANDBY</span>
@@ -1359,13 +1389,11 @@
     </div>
 
     <div class="header-actions">
-      <!-- Playlist Mode Switcher & Setup Gear Button -->
       <div class="playlist-trigger-group">
         <button class="playlist-gear-btn" onclick="openPlaylistSetupModal()" title="Setup Playlist Sequence">⚙</button>
         <button class="playlist-toggle-btn midi-mappable" id="playlistToggleBtn" data-midi-target="playlist_mode_toggle" onclick="togglePlaylistMode()" title="Aktifkan / Nonaktifkan Playlist Mode">PlayList</button>
       </div>
 
-      <!-- File Dropdown -->
       <div class="dropdown-container">
         <button class="btn-accent" onclick="toggleFileDropdown(event)">📁 File ▾</button>
         <div class="dropdown-menu" id="fileDropdownMenu">
@@ -1386,14 +1414,11 @@
     </div>
   </header>
 
-  <!-- Middle Matrix View (Synchronized Scroll) -->
   <main class="session-view">
     <div class="matrix-board" id="sessionGrid"></div>
   </main>
 
-  <!-- Bottom Waveform & Properties View (3 Kolom Berdampingan) -->
   <footer class="detail-view">
-    <!-- Kolom 1: Clip & Loop Properties -->
     <div class="clip-properties">
       <div>
         <div class="prop-header">Clip & Loop Properties</div>
@@ -1429,6 +1454,10 @@
             <label>Loop Playback:</label>
             <input type="checkbox" id="propLoop" onchange="updateCueSettingsFromInput()">
           </div>
+          <div class="prop-row">
+            <label>Next Trigger:</label>
+            <span id="propNextTriggerLabel" style="font-size:0.68rem; color:var(--midi-color); cursor:pointer;" onclick="openNextTriggerModal()">None 🔗</span>
+          </div>
           <div style="font-size: 0.66rem; color: var(--gold); margin-top: 4px; line-height: 1.25;">
             💡 <i>Drag handle hijau/merah di waveform untuk set loop start/end.</i>
           </div>
@@ -1441,7 +1470,6 @@
       </div>
     </div>
 
-    <!-- Kolom 2: Dedicated Marker Panel -->
     <div class="clip-marker-panel">
       <div class="prop-header">
         <span style="color: var(--marker-color);">🚩 Markers</span>
@@ -1458,11 +1486,21 @@
       </div>
     </div>
 
-    <!-- Kolom 3: Waveform Canvas -->
     <div class="waveform-stage">
       <div class="waveform-info-bar">
-        <span id="waveformStatus">Inspecting: None</span>
-        <span id="timecodeDisplay">0.00s / 0.00s (Sisa: -0.00s)</span>
+        <div class="waveform-header-left">
+          <span id="waveformClipTitle" style="font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">None</span>
+          <span id="waveformPathBadge" class="file-path-badge" style="display:none;" title="Lokasi Penyimpanan File"></span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="waveform-zoom-controls">
+            <button class="zoom-btn" onclick="zoomWaveform(0.5)" title="Zoom Out Waveform">-</button>
+            <span id="zoomLevelDisplay" style="font-size:0.68rem; min-width:32px; text-align:center;">1.0x</span>
+            <button class="zoom-btn" onclick="zoomWaveform(2.0)" title="Zoom In Waveform">+</button>
+            <button class="zoom-btn" onclick="resetWaveformZoom()" title="Reset Zoom">↺</button>
+          </div>
+          <span id="timecodeDisplay">0.00s / 0.00s (Sisa: -0.00s)</span>
+        </div>
       </div>
       <div class="canvas-container" id="canvasWrap">
         <canvas id="waveformCanvas"></canvas>
@@ -1470,21 +1508,22 @@
     </div>
   </footer>
 
-  <!-- Context Menu Dropdown -->
   <div class="custom-context-menu" id="slotContextMenu">
     <div class="context-menu-item" onclick="menuActionReplace()">🔄 Ganti Audio</div>
+    <div class="context-menu-item" onclick="menuActionDuplicateSlot()">📋 Duplikasi ke Bawah</div>
     <div class="context-menu-item" onclick="menuActionColorPicker(event)">🎨 Pilih Warna Slot</div>
+    <div class="context-menu-item" onclick="menuActionNextTrigger()">🔗 Set Next Trigger</div>
     <div class="context-menu-item" onclick="menuActionToggleDisable()"><span id="menuDisableText">🚫 Nonaktifkan</span></div>
     <div class="context-menu-item danger" onclick="menuActionDelete()">🗑 Hapus Audio</div>
   </div>
 
-  <!-- Scene Row Context Menu -->
   <div class="custom-context-menu" id="sceneContextMenu">
+    <div class="context-menu-item" onclick="sceneActionDuplicate()">📋 Duplicate Scene Row</div>
     <div class="context-menu-item" onclick="sceneActionColorPicker(event)">🎨 Warna Scene</div>
     <div class="context-menu-item" onclick="sceneActionRename()">✏️ Rename Scene</div>
+    <div class="context-menu-item danger" onclick="sceneActionDelete()">🗑 Hapus Scene Row</div>
   </div>
 
-  <!-- Template Color Swatch Popover (Ableton Style Presets) -->
   <div class="color-picker-popover" id="colorPickerPopover">
     <div class="color-swatch-btn" style="background:#e03131;" onclick="applyColorChoice('#e03131')" title="Red"></div>
     <div class="color-swatch-btn" style="background:#f76707;" onclick="applyColorChoice('#f76707')" title="Orange"></div>
@@ -1497,7 +1536,6 @@
     <div class="color-swatch-reset" onclick="applyColorChoice(null)">↺ Reset Default</div>
   </div>
 
-  <!-- Custom Generic Modal Popup -->
   <div class="modal-overlay" id="customModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -1511,7 +1549,6 @@
     </div>
   </div>
 
-  <!-- vMix Style Playlist Setup Modal -->
   <div class="modal-overlay" id="playlistModal">
     <div class="modal-card modal-wide">
       <div class="modal-header">
@@ -1525,7 +1562,6 @@
       </div>
       <div class="modal-body">
         <div class="vmix-playlist-stage">
-          <!-- Left: Available Inputs from Matrix -->
           <div class="vmix-panel-box">
             <div class="vmix-panel-head">
               <span>Available Matrix Clips</span>
@@ -1534,13 +1570,11 @@
             <ul class="vmix-item-list" id="availableClipList"></ul>
           </div>
 
-          <!-- Middle: Transfer Arrows -->
           <div class="vmix-middle-actions">
             <button class="vmix-middle-btn" onclick="moveSelectedToQueue()" title="Tambahkan ke Playlist">❯</button>
             <button class="vmix-middle-btn" onclick="removeSelectedFromQueue()" title="Keluarkan dari Playlist">❮</button>
           </div>
 
-          <!-- Right: Playlist Queue Table -->
           <div class="vmix-panel-box">
             <div class="vmix-panel-head">
               <span>Playlist Sequence</span>
@@ -1564,7 +1598,6 @@
           </div>
         </div>
 
-        <!-- Bottom Options Checkboxes -->
         <div class="vmix-options-bar">
           <label><input type="checkbox" id="chkPlaylistLoop" onchange="updatePlaylistOptions()"> Loop Playlist</label>
           <label><input type="checkbox" id="chkPlaylistBeginSelected" onchange="updatePlaylistOptions()"> Begin from selected item</label>
@@ -1580,7 +1613,6 @@
     </div>
   </div>
 
-  <!-- Custom Prompt/Rename Modal -->
   <div class="modal-overlay" id="promptModal">
     <div class="modal-card" style="width: 360px;">
       <div class="modal-header">
@@ -1597,7 +1629,6 @@
     </div>
   </div>
 
-  <!-- File Pickers -->
   <input type="file" id="slotFileInput" accept="audio/*">
   <input type="file" id="projectFileInput" accept=".json">
   <input type="file" id="relocateFileInput" accept="audio/*">
@@ -1609,6 +1640,8 @@
     const DB_NAME = 'RamatlokaSoraAudioDB';
     const DB_VERSION = 1;
     let dbInstance = null;
+
+    let waveformZoomScale = 1.0;
 
     function openIndexedDB() {
       return new Promise((resolve) => {
@@ -1645,7 +1678,6 @@
       });
     }
 
-    // Default Project Model
     const defaultProject = {
       projectName: "Untitled Session",
       sceneNames: ["Scene 1", "Scene 2", "Scene 3", "Scene 4"],
@@ -1675,8 +1707,9 @@
     let targetUploadSlot = null;
     let draggingHandle = null;
     let draggedSlotSource = null;
+    let draggedSceneSourceIdx = null;
     let contextMenuTarget = null;
-    let activeColorTarget = null; // { type: 'clip' | 'scene', tIdx, sIdx }
+    let activeColorTarget = null;
 
     let isMidiMode = false;
     let selectedMidiTarget = null;
@@ -1925,7 +1958,6 @@
       return false;
     }
 
-    // Update UI Transport & LCD Digital Timer Realtime
     function updateGlobalTransportUI() {
       const anyPlaying = isAnyTrackPlaying();
       const playBtn = document.getElementById('globalPlayBtn');
@@ -2033,7 +2065,6 @@
       }
     }
 
-    // Web MIDI Engine
     function initWebMidi() {
       if (navigator.requestMIDIAccess && !midiAccess) {
         navigator.requestMIDIAccess().then(onMidiSuccess, () => {
@@ -2239,13 +2270,11 @@
       const data1 = event.data[1];
       const data2 = event.data.length > 2 ? event.data[2] : 0;
       
-      const messageType = status & 0xF0; // Masking 4-bit status message
+      const messageType = status & 0xF0;
       const isCC = (messageType === 0xB0);
       const isNoteOn = (messageType === 0x90 && data2 > 0);
 
-      // Mode MIDI Mapping / MIDI Learn
       if (isMidiMode && selectedMidiTarget) {
-        // Pemetaan Slider / Fader Volume (CC)
         if ((selectedMidiTarget.startsWith('track_vol_') || selectedMidiTarget === 'master_vol') && isCC) {
           project.midiBindings[selectedMidiTarget] = { type: 'cc', number: data1 };
           showToast("MIDI Assigned", `${selectedMidiTarget} -> CC #${data1}`, "midi");
@@ -2253,9 +2282,7 @@
           autoSaveSession();
           renderSessionGrid();
           return;
-        } 
-        // Pemetaan Tombol Transport & Playlist Toggle (Note On atau CC Button)
-        else if (selectedMidiTarget.startsWith('global_') || selectedMidiTarget === 'playlist_mode_toggle') {
+        } else if (selectedMidiTarget.startsWith('global_') || selectedMidiTarget === 'playlist_mode_toggle') {
           if (isNoteOn) {
             project.midiBindings[selectedMidiTarget] = { type: 'note', number: data1 };
             showToast("MIDI Assigned", `${selectedMidiTarget} -> Note #${data1}`, "midi");
@@ -2274,12 +2301,10 @@
         }
       }
 
-      // Mode Eksekusi Playback & Mixing Normal
       const now = performance.now();
 
       for (const [targetId, binding] of Object.entries(project.midiBindings)) {
         if (binding.type === 'cc' && isCC && binding.number === data1) {
-          // Fader volume dinormalisasi ke rentang 0.0 - 1.0
           executeMidiAction(targetId, data2 / 127);
         } else if (binding.type === 'note' && isNoteOn && binding.number === data1) {
           if (now - lastMidiTriggerTime > 180) {
@@ -2399,17 +2424,23 @@
       const decoded = await audioContext.decodeAudioData(arrayBuffer.slice(0));
       audioBufferCache.set(file.name, decoded);
 
+      const sourceFolder = (file.webkitRelativePath && file.webkitRelativePath.includes('/'))
+        ? file.webkitRelativePath.substring(0, file.webkitRelativePath.lastIndexOf('/'))
+        : "Local / Root Folder";
+
       project.tracks[tIdx].clips[sIdx] = {
         id: 'clip_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
         fileName: file.name,
+        filePath: sourceFolder,
         duration: decoded.duration,
         startTime: 0,
         endTime: decoded.duration,
         isLoop: false,
         disabled: false,
         gainDb: 0,
-        color: null, // Ableton style custom color code
-        markers: []
+        color: null,
+        markers: [],
+        nextTrigger: null
       };
     }
 
@@ -2435,8 +2466,8 @@
       showToast("Audio Loaded", `${audioFiles.length} file ditambahkan ke matrix.`, "playlist");
     }
 
-    // Render Matrix Session Grid dengan Dukungan Template Color Coding
     function renderSessionGrid() {
+      const prevScrollTop = document.getElementById('masterScrollMaster')?.scrollTop || 0;
       const grid = document.getElementById('sessionGrid');
       grid.innerHTML = '';
 
@@ -2535,16 +2566,16 @@
             const isMissing = !audioBufferCache.has(clip.fileName);
             slot.className = `clip-slot ${isSelected ? 'selected' : ''} ${isTrackPlaying ? 'playing' : ''} ${isMissing ? 'missing' : ''} ${clip.disabled ? 'disabled' : ''}`;
 
-            // Penerapan Warna Slot (Border Kiri & Soft Tint Background tanpa menutup teks)
             if (clip.color) {
               slot.style.borderLeftColor = clip.color;
               if (!isTrackPlaying) {
-                slot.style.backgroundColor = `${clip.color}18`; // Transparansi 10%
+                slot.style.backgroundColor = `${clip.color}18`;
               }
             }
 
             const gainBadge = (clip.gainDb && clip.gainDb > 0) ? ` [+${clip.gainDb.toFixed(1)}dB]` : '';
             const markerBadge = (clip.markers && clip.markers.length > 0) ? ` 🚩${clip.markers.length}` : '';
+            const trigBadge = clip.nextTrigger ? ` 🔗` : '';
 
             slot.innerHTML = `
               <button class="clip-trigger-btn" onclick="toggleClipPlay(event, ${tIdx}, ${sIdx})">
@@ -2552,7 +2583,7 @@
               </button>
               <div class="clip-info">
                 <span class="clip-title" title="${clip.fileName}">${clip.fileName}</span>
-                <span class="clip-badge">${clip.disabled ? '🚫 Nonaktif' : (isMissing ? '⚠️ Missing' : (clip.isLoop ? '🔁 ' : '') + clip.duration.toFixed(1) + 's' + gainBadge + markerBadge)}</span>
+                <span class="clip-badge">${clip.disabled ? '🚫 Nonaktif' : (isMissing ? '⚠️ Missing' : (clip.isLoop ? '🔁 ' : '') + clip.duration.toFixed(1) + 's' + gainBadge + markerBadge + trigBadge)}</span>
               </div>
               <button class="slot-menu-btn" onclick="openSlotMenu(event, ${tIdx}, ${sIdx})" title="Opsi Slot">⋮</button>
             `;
@@ -2574,7 +2605,6 @@
 
         col.appendChild(slotsCont);
 
-        // Track Mixer Strip (DIperbaiki: menggunakan fader track audio yang benar)
         const volMidiTarget = `track_vol_${track.id}`;
         const isVolAssigned = !!project.midiBindings[volMidiTarget];
         const isVolSelected = selectedMidiTarget === volMidiTarget;
@@ -2613,7 +2643,6 @@
         grid.appendChild(col);
       });
 
-      // 2. Render Master Scene Column
       const masterCol = document.createElement('div');
       masterCol.className = 'track-column master-column';
 
@@ -2633,12 +2662,41 @@
       project.sceneNames.forEach((name, sIdx) => {
         const sceneSlot = document.createElement('div');
         sceneSlot.className = 'scene-slot';
+        sceneSlot.draggable = !isMidiMode;
+        sceneSlot.dataset.sceneIdx = sIdx;
         const sceneColor = project.sceneColors[sIdx];
 
         if (sceneColor) {
           sceneSlot.style.borderLeftColor = sceneColor;
           sceneSlot.style.backgroundColor = `${sceneColor}20`;
         }
+
+        sceneSlot.addEventListener('dragstart', (e) => {
+          draggedSceneSourceIdx = sIdx;
+          e.dataTransfer.setData('text/plain', `scene_${sIdx}`);
+        });
+
+        sceneSlot.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          sceneSlot.classList.add('scene-drag-over');
+        });
+
+        sceneSlot.addEventListener('dragleave', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          sceneSlot.classList.remove('scene-drag-over');
+        });
+
+        sceneSlot.addEventListener('drop', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          sceneSlot.classList.remove('scene-drag-over');
+          if (draggedSceneSourceIdx !== null && draggedSceneSourceIdx !== sIdx) {
+            moveSceneRow(draggedSceneSourceIdx, sIdx);
+            draggedSceneSourceIdx = null;
+          }
+        });
 
         sceneSlot.innerHTML = `
           <button class="clip-trigger-btn" style="color: var(--gold);" onclick="playScene(${sIdx})" title="Play Row ${sIdx + 1}">▶</button>
@@ -2690,7 +2748,31 @@
       grid.appendChild(masterCol);
 
       bindSynchronizedScroll();
+      
+      const newMasterScroll = document.getElementById('masterScrollMaster');
+      if (newMasterScroll && prevScrollTop > 0) {
+        newMasterScroll.scrollTop = prevScrollTop;
+        document.querySelectorAll('.track-slots-sync').forEach(el => el.scrollTop = prevScrollTop);
+      }
+
       updateGlobalTransportUI();
+    }
+
+    function moveSceneRow(fromIdx, toIdx) {
+      const movedName = project.sceneNames.splice(fromIdx, 1)[0];
+      project.sceneNames.splice(toIdx, 0, movedName);
+
+      const movedColor = project.sceneColors.splice(fromIdx, 1)[0];
+      project.sceneColors.splice(toIdx, 0, movedColor);
+
+      project.tracks.forEach(track => {
+        const movedClip = track.clips.splice(fromIdx, 1)[0];
+        track.clips.splice(toIdx, 0, movedClip);
+      });
+
+      autoSaveSession();
+      renderSessionGrid();
+      showToast("Scene Moved", `Scene dipindahkan ke urutan #${toIdx + 1}`, "playlist");
     }
 
     function bindSynchronizedScroll() {
@@ -2737,8 +2819,8 @@
 
       const x = e.clientX;
       const y = e.clientY;
-      contextMenu.style.left = `${Math.min(window.innerWidth - 175, x)}px`;
-      contextMenu.style.top = `${Math.min(window.innerHeight - 150, y)}px`;
+      contextMenu.style.left = `${Math.min(window.innerWidth - 185, x)}px`;
+      contextMenu.style.top = `${Math.min(window.innerHeight - 200, y)}px`;
       contextMenu.style.display = 'block';
     }
 
@@ -2747,8 +2829,8 @@
       sceneMenuTargetIdx = sIdx;
       const x = e.clientX;
       const y = e.clientY;
-      sceneContextMenu.style.left = `${Math.min(window.innerWidth - 165, x)}px`;
-      sceneContextMenu.style.top = `${Math.min(window.innerHeight - 100, y)}px`;
+      sceneContextMenu.style.left = `${Math.min(window.innerWidth - 185, x)}px`;
+      sceneContextMenu.style.top = `${Math.min(window.innerHeight - 170, y)}px`;
       sceneContextMenu.style.display = 'block';
     }
 
@@ -2756,6 +2838,134 @@
       if (!contextMenuTarget) return;
       openFileForSlot(contextMenuTarget.tIdx, contextMenuTarget.sIdx);
       contextMenu.style.display = 'none';
+    }
+
+    function menuActionDuplicateSlot() {
+      if (!contextMenuTarget) return;
+      const { tIdx, sIdx } = contextMenuTarget;
+      const clip = project.tracks[tIdx].clips[sIdx];
+      if (!clip) return;
+
+      const targetSIdx = sIdx + 1;
+      if (targetSIdx >= project.sceneNames.length) {
+        addSceneRow();
+      }
+
+      project.tracks[tIdx].clips[targetSIdx] = JSON.parse(JSON.stringify(clip));
+      project.tracks[tIdx].clips[targetSIdx].id = 'clip_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+
+      autoSaveSession();
+      selectClipForInspection(tIdx, targetSIdx);
+      renderSessionGrid();
+      contextMenu.style.display = 'none';
+      showToast("Slot Duplicated", `Klip digandakan ke Slot ${targetSIdx + 1}`, "playlist");
+    }
+
+    function menuActionNextTrigger() {
+      if (!contextMenuTarget) return;
+      contextMenu.style.display = 'none';
+      openNextTriggerModal();
+    }
+
+    function openNextTriggerModal() {
+      if (!selectedClipTarget || !selectedClipTarget.clip) return;
+      const { clip } = selectedClipTarget;
+
+      let optionsHtml = `<option value="">-- Tidak ada (Berhenti) --</option>`;
+      project.tracks.forEach((track, tIdx) => {
+        track.clips.forEach((c, sIdx) => {
+          if (c && c !== clip) {
+            const isSel = clip.nextTrigger && clip.nextTrigger.tIdx === tIdx && clip.nextTrigger.sIdx === sIdx;
+            optionsHtml += `<option value="${tIdx},${sIdx}" ${isSel ? 'selected' : ''}>[${track.name}] Slot ${sIdx + 1} - ${c.fileName}</option>`;
+          }
+        });
+      });
+
+      const bodyHtml = `
+        <div style="font-size:0.8rem; margin-bottom:10px;">
+          Pilih file audio yang otomatis dimainkan setelah <b>${clip.fileName}</b> selesai:
+        </div>
+        <select id="triggerTargetSelect" style="width:100%; background:#090c10; border:1px solid var(--border); color:var(--text-main); padding:6px; border-radius:4px; font-size:0.8rem; outline:none;">
+          ${optionsHtml}
+        </select>
+      `;
+
+      const footerHtml = `
+        <button onclick="closeModal()">Batal</button>
+        <button class="btn-accent" onclick="saveNextTriggerSetting()">Simpan Trigger</button>
+      `;
+
+      showModal("🔗 On Completed Trigger", bodyHtml, footerHtml);
+    }
+
+    function saveNextTriggerSetting() {
+      const select = document.getElementById('triggerTargetSelect');
+      if (!select || !selectedClipTarget || !selectedClipTarget.clip) return;
+      const val = select.value;
+      if (val) {
+        const [tIdx, sIdx] = val.split(',').map(n => parseInt(n));
+        selectedClipTarget.clip.nextTrigger = { tIdx, sIdx };
+        document.getElementById('propNextTriggerLabel').innerText = `[T${tIdx+1}:S${sIdx+1}] 🔗`;
+      } else {
+        selectedClipTarget.clip.nextTrigger = null;
+        document.getElementById('propNextTriggerLabel').innerText = `None 🔗`;
+      }
+      closeModal();
+      autoSaveSession();
+      renderSessionGrid();
+      showToast("Trigger Saved", "Alur trigger otomatis disimpan.", "playlist");
+    }
+
+    function sceneActionDuplicate() {
+      if (sceneMenuTargetIdx === null) return;
+      const sIdx = sceneMenuTargetIdx;
+      sceneContextMenu.style.display = 'none';
+
+      const insertIdx = sIdx + 1;
+      const baseName = project.sceneNames[sIdx];
+      const newName = `${baseName} (Copy)`;
+
+      project.sceneNames.splice(insertIdx, 0, newName);
+      project.sceneColors.splice(insertIdx, 0, project.sceneColors[sIdx]);
+
+      project.tracks.forEach(track => {
+        const sourceClip = track.clips[sIdx];
+        let clonedClip = null;
+        if (sourceClip) {
+          clonedClip = JSON.parse(JSON.stringify(sourceClip));
+          clonedClip.id = 'clip_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+        }
+        track.clips.splice(insertIdx, 0, clonedClip);
+      });
+
+      autoSaveSession();
+      renderSessionGrid();
+      showToast("Scene Duplicated", `Scene baru ditambahkan pada baris #${insertIdx + 1}`, "playlist");
+    }
+
+    function sceneActionDelete() {
+      if (sceneMenuTargetIdx === null) return;
+      const sIdx = sceneMenuTargetIdx;
+      sceneContextMenu.style.display = 'none';
+
+      if (project.sceneNames.length <= 1) {
+        showToast("Hapus Dibatalkan", "Project minimal harus memiliki 1 scene.", "warn");
+        return;
+      }
+
+      showCustomConfirm(`Hapus "${project.sceneNames[sIdx]}"?`, "Semua file audio pada barisan scene ini akan dihapus dari grid matrix.", () => {
+        project.tracks.forEach(track => {
+          stopTrackSingle(track.id - 1);
+          track.clips.splice(sIdx, 1);
+        });
+
+        project.sceneNames.splice(sIdx, 1);
+        project.sceneColors.splice(sIdx, 1);
+
+        autoSaveSession();
+        renderSessionGrid();
+        showToast("Scene Deleted", "Barisan scene berhasil dihapus.", "playlist");
+      });
     }
 
     function menuActionColorPicker(e) {
@@ -2839,6 +3049,8 @@
         document.getElementById('btnAddMarkerBtn').style.display = 'none';
         document.getElementById('markerTipMsg').style.display = 'none';
         document.getElementById('markerChipList').innerHTML = '';
+        document.getElementById('waveformClipTitle').innerText = 'None';
+        document.getElementById('waveformPathBadge').style.display = 'none';
       }
       autoSaveSession();
       renderSessionGrid();
@@ -2933,7 +3145,6 @@
     }
     requestAnimationFrame(updateVUMeters);
 
-    // Inspector Waveform, Marker & Clip Gain Handlers
     function selectClipForInspection(tIdx, sIdx) {
       if (isMidiMode) return;
       const track = project.tracks[tIdx];
@@ -2961,6 +3172,9 @@
       document.getElementById('propEnd').value = clip.endTime.toFixed(2);
       document.getElementById('propLoop').checked = clip.isLoop;
 
+      const triggerLabel = clip.nextTrigger ? `[T${clip.nextTrigger.tIdx+1}:S${clip.nextTrigger.sIdx+1}] 🔗` : `None 🔗`;
+      document.getElementById('propNextTriggerLabel').innerText = triggerLabel;
+
       document.getElementById('noMarkerSelectionMsg').style.display = 'none';
       document.getElementById('btnAddMarkerBtn').style.display = 'inline-flex';
       document.getElementById('markerTipMsg').style.display = 'block';
@@ -2968,7 +3182,13 @@
 
       const isMissing = !audioBufferCache.has(clip.fileName);
       document.getElementById('relocateWrap').style.display = isMissing ? 'block' : 'none';
-      document.getElementById('waveformStatus').innerText = `Inspecting: ${clip.fileName} [${track.name} - Slot ${sIdx+1}]`;
+      
+      document.getElementById('waveformClipTitle').innerText = clip.fileName;
+      const pathBadge = document.getElementById('waveformPathBadge');
+      const displayPath = clip.filePath || "Local / Root Folder";
+      pathBadge.innerText = `📁 ${displayPath}`;
+      pathBadge.title = `Full Location: ${displayPath}/${clip.fileName}`;
+      pathBadge.style.display = 'inline-block';
     }
 
     function renderMarkerChips() {
@@ -3151,7 +3371,17 @@
       renderSessionGrid();
     }
 
-    // Audio Playback Engine
+    function zoomWaveform(factor) {
+      waveformZoomScale = Math.max(1.0, Math.min(16.0, waveformZoomScale * factor));
+      document.getElementById('zoomLevelDisplay').innerText = `${waveformZoomScale.toFixed(1)}x`;
+    }
+
+    function resetWaveformZoom() {
+      waveformZoomScale = 1.0;
+      document.getElementById('zoomLevelDisplay').innerText = `1.0x`;
+      document.getElementById('canvasWrap').scrollLeft = 0;
+    }
+
     function startClipPlayback(tIdx, sIdx, resumeFromCurrent = false, explicitOffset = null, customEndTime = null, onEndedCallback = null) {
       initAudio();
       const track = project.tracks[tIdx];
@@ -3209,6 +3439,13 @@
             renderSessionGrid();
             if (onEndedCallback) {
               onEndedCallback();
+            } else if (clip.nextTrigger && !isPlaylistModeActive) {
+              const { tIdx: nT, sIdx: nS } = clip.nextTrigger;
+              if (project.tracks[nT] && project.tracks[nT].clips[nS]) {
+                startClipPlayback(nT, nS, false);
+                selectClipForInspection(nT, nS);
+                showToast("Chain Triggered", `Memutar klip rantai berikutnya: ${project.tracks[nT].clips[nS].fileName}`, "playlist");
+              }
             }
           }
         };
@@ -3362,7 +3599,6 @@
       renderSessionGrid();
     }
 
-    // Waveform Canvas Rendering
     const canvas = document.getElementById('waveformCanvas');
     const ctx = canvas.getContext('2d');
 
@@ -3487,9 +3723,12 @@
 
     function drawWaveformStage() {
       const wrap = document.getElementById('canvasWrap');
-      if (canvas.width !== wrap.clientWidth || canvas.height !== wrap.clientHeight) {
-        canvas.width = wrap.clientWidth;
-        canvas.height = wrap.clientHeight;
+      const targetWidth = Math.round(wrap.clientWidth * waveformZoomScale);
+      const targetHeight = wrap.clientHeight;
+
+      if (canvas.width !== targetWidth || canvas.height !== targetHeight) {
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
       }
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -3521,7 +3760,6 @@
           ctx.fillStyle = 'rgba(227, 179, 65, 0.15)';
           ctx.fillRect(startX, 0, endX - startX, canvas.height);
 
-          // Handle Start (Hijau)
           ctx.strokeStyle = '#2ea043';
           ctx.lineWidth = 3;
           ctx.beginPath();
@@ -3532,7 +3770,6 @@
           ctx.fillStyle = '#2ea043';
           ctx.fillRect(startX - 6, 0, 12, 20);
 
-          // Handle End (Merah)
           ctx.strokeStyle = '#f85149';
           ctx.lineWidth = 3;
           ctx.beginPath();
@@ -3543,7 +3780,6 @@
           ctx.fillStyle = '#f85149';
           ctx.fillRect(endX - 6, canvas.height - 20, 12, 20);
 
-          // Waveform Markers
           if (clip.markers && clip.markers.length > 0) {
             ctx.font = 'bold 10px sans-serif';
 
@@ -3578,7 +3814,6 @@
             });
           }
 
-          // Playhead Putih Realtime
           const track = project.tracks[trackIndex];
           const nodes = trackAudioNodes.get(track.id);
 
@@ -3615,9 +3850,6 @@
     }
     requestAnimationFrame(drawWaveformStage);
 
-    // ==========================================
-    // Unified Matrix-Linked Playlist Engine
-    // ==========================================
     function openPlaylistSetupModal() {
       if (!project.playlist) {
         project.playlist = { items: [], loop: false, manual: false, beginSelected: false };
@@ -3858,7 +4090,6 @@
       const item = items[idx];
       playlistState.currentIndex = idx;
 
-      // Fallback: cari slot jika trackIndex belum tercatat
       if (item.trackIndex === undefined || item.slotIndex === undefined) {
         for (let t = 0; t < project.tracks.length; t++) {
           for (let s = 0; s < project.tracks[t].clips.length; s++) {
@@ -3945,13 +4176,12 @@
       jumpPlayQueueItem(prevIdx);
     }
 
-    // Save & Load Project JSON
     async function saveProject(forceSaveAs = false) {
       document.getElementById('fileDropdownMenu').classList.remove('show');
 
       const exportData = {
         appName: 'Ramatloka Sora',
-        version: '2.2',
+        version: '2.3',
         exportedAt: new Date().toISOString(),
         projectName: project.projectName || "Untitled Session",
         sceneNames: project.sceneNames,
