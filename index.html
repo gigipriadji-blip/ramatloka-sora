@@ -154,6 +154,34 @@
       color: var(--danger);
     }
 
+    .btn-stem-sync {
+      height: 30px;
+      padding: 0 10px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: var(--bg-track);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-stem-sync:hover {
+      border-color: var(--gold);
+      color: var(--text-main);
+    }
+
+    .btn-stem-sync.active {
+      background-color: var(--gold);
+      color: #000;
+      border-color: var(--gold-hover);
+      box-shadow: 0 0 10px rgba(227, 179, 65, 0.45);
+    }
+
     .timecode-lcd {
       background: #080b0f;
       border: 1px solid #27303d;
@@ -472,8 +500,8 @@
       border-radius: 4px;
       display: flex;
       align-items: center;
-      padding: 4px 6px;
-      gap: 6px;
+      padding: 4px 5px;
+      gap: 5px;
       cursor: pointer;
       position: relative;
       flex-shrink: 0;
@@ -504,6 +532,42 @@
     .clip-slot.drag-over {
       border: 2px dashed var(--gold) !important;
       background-color: #2b394e !important;
+    }
+
+    .slot-drag-handle,
+    .scene-drag-handle {
+      width: 14px;
+      height: 32px;
+      border-radius: 3px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #6e7681;
+      font-size: 0.72rem;
+      line-height: 1;
+      letter-spacing: -2px;
+      cursor: grab;
+      flex-shrink: 0;
+      touch-action: none;
+      transition: color 0.12s, background-color 0.12s;
+    }
+
+    .slot-drag-handle:hover,
+    .scene-drag-handle:hover {
+      color: var(--gold);
+      background-color: rgba(227, 179, 65, 0.12);
+    }
+
+    .slot-drag-handle:active,
+    .scene-drag-handle:active {
+      cursor: grabbing;
+      color: var(--gold-hover);
+    }
+
+    .clip-slot.dragging-source,
+    .scene-slot.dragging-source {
+      opacity: 0.55;
+      border-style: dashed !important;
     }
 
     .clip-trigger-btn {
@@ -557,7 +621,7 @@
       border: 1px dashed #303742 !important;
       border-left: 1px dashed #303742 !important;
       background: transparent !important;
-      justify-content: center;
+      justify-content: flex-start;
       color: #57606a;
       font-size: 0.72rem;
     }
@@ -566,6 +630,12 @@
       border-color: var(--border) !important;
       background-color: rgba(255, 255, 255, 0.02) !important;
       color: var(--text-muted);
+    }
+
+    .empty-slot-label {
+      flex: 1;
+      text-align: center;
+      padding-right: 12px;
     }
 
     .slot-menu-btn {
@@ -591,15 +661,11 @@
       border-radius: 4px;
       display: flex;
       align-items: center;
-      padding: 4px 6px;
-      gap: 6px;
+      padding: 4px 5px;
+      gap: 5px;
       flex-shrink: 0;
+      cursor: default;
       transition: background-color 0.12s, border-color 0.12s;
-      cursor: grab;
-    }
-
-    .scene-slot:active {
-      cursor: grabbing;
     }
 
     .scene-slot.scene-drag-over {
@@ -614,7 +680,7 @@
       font-size: 0.75rem;
       font-weight: 600;
       outline: none;
-      width: 78px;
+      width: 70px;
       padding: 2px 4px;
       border-radius: 3px;
       text-shadow: 0 1px 2px rgba(0,0,0,0.8);
@@ -1386,6 +1452,11 @@
         <span class="timecode-lcd-main" id="globalTimerLcd">00:00.0 / -00:00.0</span>
         <span class="timecode-lcd-sub" id="globalTimerSub">MATRIX STANDBY</span>
       </div>
+
+      <!-- Tombol Toggle Auto Sync / Multitrack Stem Link -->
+      <button class="btn-stem-sync midi-mappable" id="stemSyncToggleBtn" data-midi-target="stem_sync_toggle" onclick="toggleStemSyncMode()" title="Auto Sync: Sinkronkan posisi playhead ke semua klip dalam 1 baris scene">
+        🔗 Auto Sync
+      </button>
     </div>
 
     <div class="header-actions">
@@ -1413,7 +1484,6 @@
       </button>
     </div>
   </header>
-
   <main class="session-view">
     <div class="matrix-board" id="sessionGrid"></div>
   </main>
@@ -1642,6 +1712,7 @@
     let dbInstance = null;
 
     let waveformZoomScale = 1.0;
+    let isStemSyncActive = false;
 
     function openIndexedDB() {
       return new Promise((resolve) => {
@@ -1958,11 +2029,79 @@
       return false;
     }
 
+    function toggleStemSyncMode() {
+      if (isMidiMode) {
+        handleMidiTargetClick('stem_sync_toggle');
+        return;
+      }
+      isStemSyncActive = !isStemSyncActive;
+      const btn = document.getElementById('stemSyncToggleBtn');
+      if (btn) {
+        if (isStemSyncActive) {
+          btn.classList.add('active');
+          showToast("Auto Sync Active", "Playhead disinkronkan ke seluruh track dalam 1 baris scene.", "playlist");
+          if (selectedClipTarget && selectedClipTarget.clip) {
+            const { trackIndex, slotIndex, clip } = selectedClipTarget;
+            const track = project.tracks[trackIndex];
+            const nodes = trackAudioNodes.get(track.id);
+            let curPos = clip.startTime;
+            if (nodes && nodes.clip === clip) {
+              if (nodes.isPlaying) {
+                curPos = nodes.startOffset + (audioContext.currentTime - nodes.startCtxTime);
+              } else {
+                curPos = nodes.currentPlayhead || clip.startTime;
+              }
+            }
+            syncScenePlayhead(slotIndex, curPos, false);
+          }
+        } else {
+          btn.classList.remove('active');
+          showToast("Auto Sync Off", "Setiap slot klip kembali berjalan independen.", "playlist");
+        }
+      }
+    }
+
+    function syncScenePlayhead(sIdx, targetTime, forceJumpIfPlaying = true) {
+      if (!isStemSyncActive) return;
+
+      project.tracks.forEach((track, tIdx) => {
+        track.activeSlotIndex = sIdx;
+        const clip = track.clips[sIdx];
+        const nodes = getTrackNodes(track);
+
+        if (!clip || clip.disabled) {
+          pauseTrackHold(tIdx);
+          return;
+        }
+
+        const effectiveEnd = clip.endTime || clip.duration;
+        const isOutOfBounds = (targetTime >= effectiveEnd);
+
+        if (isOutOfBounds) {
+          if (nodes.isPlaying) {
+            pauseTrackHold(tIdx);
+          }
+          nodes.clip = clip;
+          nodes.currentPlayhead = effectiveEnd;
+        } else {
+          if (nodes.isPlaying && forceJumpIfPlaying) {
+            startClipPlayback(tIdx, sIdx, false, targetTime);
+          } else {
+            nodes.clip = clip;
+            nodes.currentPlayhead = Math.max(0, targetTime);
+          }
+        }
+      });
+
+      renderSessionGrid();
+    }
+
     function updateGlobalTransportUI() {
       const anyPlaying = isAnyTrackPlaying();
       const playBtn = document.getElementById('globalPlayBtn');
       const pauseBtn = document.getElementById('globalPauseBtn');
       const pToggle = document.getElementById('playlistToggleBtn');
+      const sSyncBtn = document.getElementById('stemSyncToggleBtn');
 
       if (playBtn) {
         if (anyPlaying) {
@@ -1986,6 +2125,14 @@
           pToggle.classList.add('mode-active');
         } else {
           pToggle.classList.remove('mode-active');
+        }
+      }
+
+      if (sSyncBtn) {
+        if (isStemSyncActive) {
+          sSyncBtn.classList.add('active');
+        } else {
+          sSyncBtn.classList.remove('active');
         }
       }
 
@@ -2047,11 +2194,11 @@
         if (maxCur > 0) {
           const remain = Math.max(0, maxDur - maxCur);
           timerMain.innerText = `${formatTimecode(maxCur)} / -${formatTimecode(remain)}`;
-          timerSub.innerText = `MATRIX: ${activeName}`;
+          timerSub.innerText = isStemSyncActive ? `AUTO SYNC: ${activeName}` : `MATRIX: ${activeName}`;
           timerMain.style.color = 'var(--green-bright)';
         } else {
           timerMain.innerText = '00:00.0 / -00:00.0';
-          timerSub.innerText = 'MATRIX STANDBY';
+          timerSub.innerText = isStemSyncActive ? 'AUTO SYNC STANDBY' : 'MATRIX STANDBY';
           timerMain.style.color = 'var(--text-muted)';
         }
       }
@@ -2158,14 +2305,36 @@
         playlistState.isRunning = true;
         playQueueIndex(playlistState.currentIndex, true);
       } else {
-        project.tracks.forEach((track, tIdx) => {
-          if (track.activeSlotIndex !== null && track.activeSlotIndex !== undefined) {
-            const sIdx = track.activeSlotIndex;
-            if (track.clips[sIdx] && !track.clips[sIdx].disabled) {
-              startClipPlayback(tIdx, sIdx, true);
+        if (isStemSyncActive && selectedClipTarget) {
+          const targetRow = selectedClipTarget.slotIndex;
+          const refTrack = project.tracks[selectedClipTarget.trackIndex];
+          const refNodes = trackAudioNodes.get(refTrack.id);
+          const syncPos = (refNodes && refNodes.clip === selectedClipTarget.clip)
+            ? (refNodes.currentPlayhead || 0)
+            : 0;
+
+          project.tracks.forEach((track, tIdx) => {
+            track.activeSlotIndex = targetRow;
+            const clip = track.clips[targetRow];
+            if (clip && !clip.disabled) {
+              const effectiveEnd = clip.endTime || clip.duration;
+              if (syncPos < effectiveEnd) {
+                startClipPlayback(tIdx, targetRow, false, syncPos);
+              } else {
+                pauseTrackHold(tIdx);
+              }
             }
-          }
-        });
+          });
+        } else {
+          project.tracks.forEach((track, tIdx) => {
+            if (track.activeSlotIndex !== null && track.activeSlotIndex !== undefined) {
+              const sIdx = track.activeSlotIndex;
+              if (track.clips[sIdx] && !track.clips[sIdx].disabled) {
+                startClipPlayback(tIdx, sIdx, true);
+              }
+            }
+          });
+        }
         renderSessionGrid();
       }
       updateGlobalTransportUI();
@@ -2282,7 +2451,7 @@
           autoSaveSession();
           renderSessionGrid();
           return;
-        } else if (selectedMidiTarget.startsWith('global_') || selectedMidiTarget === 'playlist_mode_toggle') {
+        } else if (selectedMidiTarget.startsWith('global_') || selectedMidiTarget === 'playlist_mode_toggle' || selectedMidiTarget === 'stem_sync_toggle') {
           if (isNoteOn) {
             project.midiBindings[selectedMidiTarget] = { type: 'note', number: data1 };
             showToast("MIDI Assigned", `${selectedMidiTarget} -> Note #${data1}`, "midi");
@@ -2329,6 +2498,8 @@
         triggerGlobalStop();
       } else if (targetId === 'playlist_mode_toggle') {
         togglePlaylistMode();
+      } else if (targetId === 'stem_sync_toggle') {
+        toggleStemSyncMode();
       } else if (targetId === 'master_vol') {
         changeMasterVolume(value);
         const fader = document.querySelector(`input[data-midi-target="master_vol"]`);
@@ -2374,6 +2545,7 @@
       showCustomConfirm("Buat project baru?", "Semua konfigurasi track dan playlist yang belum disimpan akan dikosongkan.", () => {
         stopAllTracks();
         isPlaylistModeActive = false;
+        isStemSyncActive = false;
         playlistState = { isRunning: false, isPaused: false, currentIndex: -1, selectedModalRow: -1, selectedAvailableClip: null, delayTimer: null, delayRemaining: 0, delayInterval: null };
         project = JSON.parse(JSON.stringify(defaultProject));
         currentFileHandle = null;
@@ -2514,14 +2686,8 @@
           const isSelected = track.activeSlotIndex === sIdx;
           const isTrackPlaying = trackAudioNodes.get(track.id)?.isPlaying && trackAudioNodes.get(track.id)?.clip === clip;
 
-          slot.draggable = !isMidiMode && !!clip;
           slot.dataset.tIdx = tIdx;
           slot.dataset.sIdx = sIdx;
-
-          slot.addEventListener('dragstart', (e) => {
-            draggedSlotSource = { tIdx, sIdx };
-            e.dataTransfer.setData('text/plain', `${tIdx},${sIdx}`);
-          });
 
           slot.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -2578,23 +2744,48 @@
             const trigBadge = clip.nextTrigger ? ` 🔗` : '';
 
             slot.innerHTML = `
+              <span class="slot-drag-handle" draggable="${!isMidiMode}" title="Drag dari sini untuk memindahkan slot">⋮⋮</span>
               <button class="clip-trigger-btn" onclick="toggleClipPlay(event, ${tIdx}, ${sIdx})">
                 ${isTrackPlaying ? '⏹' : '▶'}
               </button>
               <div class="clip-info">
                 <span class="clip-title" title="${clip.fileName}">${clip.fileName}</span>
-                <span class="clip-badge">${clip.disabled ? '🚫 Nonaktif' : (isMissing ? '⚠️ Missing' : (clip.isLoop ? '🔁 ' : '') + clip.duration.toFixed(1) + 's' + gainBadge + markerBadge + trigBadge)}</span>
+                <span class="clip-badge">${clip.disabled ? '🚫 Nonaktif' : (isMissing ? '⚠️ Missing' : (clip.isLoop && !isStemSyncActive ? '🔁 ' : '') + clip.duration.toFixed(1) + 's' + gainBadge + markerBadge + trigBadge)}</span>
               </div>
               <button class="slot-menu-btn" onclick="openSlotMenu(event, ${tIdx}, ${sIdx})" title="Opsi Slot">⋮</button>
             `;
+
+            const handleEl = slot.querySelector('.slot-drag-handle');
+            if (handleEl) {
+              handleEl.addEventListener('click', (e) => e.stopPropagation());
+              handleEl.addEventListener('dragstart', (e) => {
+                e.stopPropagation();
+                draggedSlotSource = { tIdx, sIdx };
+                slot.classList.add('dragging-source');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', `${tIdx},${sIdx}`);
+                if (e.dataTransfer.setDragImage) {
+                  e.dataTransfer.setDragImage(slot, 16, 24);
+                }
+              });
+              handleEl.addEventListener('dragend', () => {
+                slot.classList.remove('dragging-source');
+                draggedSlotSource = null;
+              });
+            }
+
             slot.onclick = (e) => {
-              if (!e.target.classList.contains('slot-menu-btn') && !e.target.classList.contains('clip-trigger-btn')) {
+              if (
+                !e.target.classList.contains('slot-menu-btn') &&
+                !e.target.classList.contains('clip-trigger-btn') &&
+                !e.target.classList.contains('slot-drag-handle')
+              ) {
                 selectClipForInspection(tIdx, sIdx);
               }
             };
           } else {
             slot.className = `clip-slot empty-slot ${isSelected ? 'selected' : ''}`;
-            slot.innerText = '+ Empty Slot';
+            slot.innerHTML = `<span class="empty-slot-label">+ Empty Slot</span>`;
             slot.onclick = () => {
               track.activeSlotIndex = sIdx;
               openFileForSlot(tIdx, sIdx);
@@ -2662,7 +2853,6 @@
       project.sceneNames.forEach((name, sIdx) => {
         const sceneSlot = document.createElement('div');
         sceneSlot.className = 'scene-slot';
-        sceneSlot.draggable = !isMidiMode;
         sceneSlot.dataset.sceneIdx = sIdx;
         const sceneColor = project.sceneColors[sIdx];
 
@@ -2670,11 +2860,6 @@
           sceneSlot.style.borderLeftColor = sceneColor;
           sceneSlot.style.backgroundColor = `${sceneColor}20`;
         }
-
-        sceneSlot.addEventListener('dragstart', (e) => {
-          draggedSceneSourceIdx = sIdx;
-          e.dataTransfer.setData('text/plain', `scene_${sIdx}`);
-        });
 
         sceneSlot.addEventListener('dragover', (e) => {
           e.preventDefault();
@@ -2699,12 +2884,33 @@
         });
 
         sceneSlot.innerHTML = `
+          <span class="scene-drag-handle" draggable="${!isMidiMode}" title="Drag dari sini untuk memindahkan urutan scene">⋮⋮</span>
           <button class="clip-trigger-btn" style="color: var(--gold);" onclick="playScene(${sIdx})" title="Play Row ${sIdx + 1}">▶</button>
           <input type="text" class="scene-title-input" value="${name}" 
             onchange="renameSceneInline(${sIdx}, this.value)" 
             onkeydown="if(event.key==='Enter') this.blur()">
           <button class="slot-menu-btn" onclick="openSceneMenu(event, ${sIdx})" title="Opsi Scene">⋮</button>
         `;
+
+        const sceneHandleEl = sceneSlot.querySelector('.scene-drag-handle');
+        if (sceneHandleEl) {
+          sceneHandleEl.addEventListener('click', (e) => e.stopPropagation());
+          sceneHandleEl.addEventListener('dragstart', (e) => {
+            e.stopPropagation();
+            draggedSceneSourceIdx = sIdx;
+            sceneSlot.classList.add('dragging-source');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', `scene_${sIdx}`);
+            if (e.dataTransfer.setDragImage) {
+              e.dataTransfer.setDragImage(sceneSlot, 16, 24);
+            }
+          });
+          sceneHandleEl.addEventListener('dragend', () => {
+            sceneSlot.classList.remove('dragging-source');
+            draggedSceneSourceIdx = null;
+          });
+        }
+
         sceneSlotsCont.appendChild(sceneSlot);
       });
 
@@ -2757,7 +2963,6 @@
 
       updateGlobalTransportUI();
     }
-
     function moveSceneRow(fromIdx, toIdx) {
       const movedName = project.sceneNames.splice(fromIdx, 1)[0];
       project.sceneNames.splice(toIdx, 0, movedName);
@@ -3240,7 +3445,7 @@
         if (nodes.isPlaying) {
           const elapsed = audioContext.currentTime - nodes.startCtxTime;
           cur = nodes.startOffset + elapsed;
-          if (clip.isLoop) {
+          if (clip.isLoop && !isStemSyncActive) {
             const len = clip.endTime - clip.startTime;
             if (len > 0) cur = clip.startTime + ((nodes.startOffset - clip.startTime + elapsed) % len);
           }
@@ -3301,10 +3506,14 @@
 
       const boundedSeekTime = Math.max(0, Math.min(clip.duration, time));
 
-      if (nodes && nodes.isPlaying && nodes.clip === clip) {
-        startClipPlayback(trackIndex, slotIndex, false, boundedSeekTime);
-      } else if (nodes) {
-        nodes.currentPlayhead = boundedSeekTime;
+      if (isStemSyncActive) {
+        syncScenePlayhead(slotIndex, boundedSeekTime, true);
+      } else {
+        if (nodes && nodes.isPlaying && nodes.clip === clip) {
+          startClipPlayback(trackIndex, slotIndex, false, boundedSeekTime);
+        } else if (nodes) {
+          nodes.currentPlayhead = boundedSeekTime;
+        }
       }
     }
 
@@ -3402,6 +3611,36 @@
       const buffer = audioBufferCache.get(clip.fileName);
       if (!buffer) return;
 
+      let startPos = isStemSyncActive ? 0 : clip.startTime;
+      if (explicitOffset !== null) {
+        startPos = explicitOffset;
+        nodes.currentPlayhead = explicitOffset;
+      } else if (resumeFromCurrent && nodes.clip === clip) {
+        const minLimit = isStemSyncActive ? 0 : clip.startTime;
+        const maxLimit = isStemSyncActive ? clip.duration : clip.endTime;
+        if (nodes.currentPlayhead >= minLimit && nodes.currentPlayhead < maxLimit) {
+          startPos = nodes.currentPlayhead;
+        } else {
+          nodes.currentPlayhead = minLimit;
+          startPos = minLimit;
+        }
+      } else {
+        nodes.currentPlayhead = startPos;
+      }
+
+      const effectiveEndTime = (customEndTime !== null) 
+        ? customEndTime 
+        : (isStemSyncActive ? clip.duration : clip.endTime);
+
+      if (startPos >= effectiveEndTime) {
+        nodes.isPlaying = false;
+        nodes.clip = clip;
+        nodes.currentPlayhead = effectiveEndTime;
+        return;
+      }
+
+      const remainDuration = Math.max(0.01, effectiveEndTime - startPos);
+
       const source = audioContext.createBufferSource();
       source.buffer = buffer;
 
@@ -3412,20 +3651,7 @@
       source.connect(clipGainNode);
       clipGainNode.connect(nodes.gainNode);
 
-      let startPos = clip.startTime;
-      if (explicitOffset !== null) {
-        startPos = explicitOffset;
-        nodes.currentPlayhead = explicitOffset;
-      } else if (resumeFromCurrent && nodes.clip === clip && nodes.currentPlayhead >= clip.startTime && nodes.currentPlayhead < clip.endTime) {
-        startPos = nodes.currentPlayhead;
-      } else {
-        nodes.currentPlayhead = clip.startTime;
-      }
-
-      const effectiveEndTime = (customEndTime !== null) ? customEndTime : clip.endTime;
-      const remainDuration = Math.max(0.01, effectiveEndTime - startPos);
-
-      if (clip.isLoop && !isPlaylistModeActive) {
+      if (clip.isLoop && !isPlaylistModeActive && !isStemSyncActive) {
         source.loop = true;
         source.loopStart = clip.startTime;
         source.loopEnd = clip.endTime;
@@ -3435,11 +3661,11 @@
         source.onended = () => {
           if (nodes.clip === clip && nodes.isPlaying) {
             nodes.isPlaying = false;
-            nodes.currentPlayhead = clip.startTime;
+            nodes.currentPlayhead = isStemSyncActive ? effectiveEndTime : clip.startTime;
             renderSessionGrid();
             if (onEndedCallback) {
               onEndedCallback();
-            } else if (clip.nextTrigger && !isPlaylistModeActive) {
+            } else if (clip.nextTrigger && !isPlaylistModeActive && !isStemSyncActive) {
               const { tIdx: nT, sIdx: nS } = clip.nextTrigger;
               if (project.tracks[nT] && project.tracks[nT].clips[nS]) {
                 startClipPlayback(nT, nS, false);
@@ -3466,11 +3692,12 @@
         const elapsed = audioContext.currentTime - nodes.startCtxTime;
         const clip = nodes.clip;
         if (clip) {
-          if (clip.isLoop && !isPlaylistModeActive) {
+          if (clip.isLoop && !isPlaylistModeActive && !isStemSyncActive) {
             const loopLen = clip.endTime - clip.startTime;
             nodes.currentPlayhead = clip.startTime + ((nodes.startOffset - clip.startTime + elapsed) % loopLen);
           } else {
-            nodes.currentPlayhead = Math.min(clip.endTime, nodes.startOffset + elapsed);
+            const maxEnd = isStemSyncActive ? clip.duration : clip.endTime;
+            nodes.currentPlayhead = Math.min(maxEnd, nodes.startOffset + elapsed);
           }
         }
         try { nodes.sourceNode.stop(); } catch(e){}
@@ -3487,7 +3714,7 @@
       const nodes = trackAudioNodes.get(track.id);
       if (nodes) {
         const activeClip = (track.activeSlotIndex !== null) ? track.clips[track.activeSlotIndex] : nodes.clip;
-        nodes.currentPlayhead = activeClip ? activeClip.startTime : 0;
+        nodes.currentPlayhead = (activeClip && !isStemSyncActive) ? activeClip.startTime : 0;
       }
     }
 
@@ -3545,11 +3772,48 @@
 
     function playScene(rowIdx) {
       initAudio();
+
+      let sharedSyncOffset = null;
+      if (isStemSyncActive) {
+        if (selectedClipTarget && selectedClipTarget.slotIndex === rowIdx) {
+          const refTrack = project.tracks[selectedClipTarget.trackIndex];
+          const refNodes = trackAudioNodes.get(refTrack.id);
+          if (refNodes && refNodes.clip === selectedClipTarget.clip) {
+            sharedSyncOffset = refNodes.currentPlayhead || 0;
+          }
+        }
+        if (sharedSyncOffset === null) {
+          for (let t = 0; t < project.tracks.length; t++) {
+            const c = project.tracks[t].clips[rowIdx];
+            if (c) {
+              const n = trackAudioNodes.get(project.tracks[t].id);
+              if (n && n.clip === c && n.currentPlayhead > 0) {
+                sharedSyncOffset = n.currentPlayhead;
+                break;
+              }
+            }
+          }
+        }
+        if (sharedSyncOffset === null) sharedSyncOffset = 0;
+      }
+
       project.tracks.forEach((track, tIdx) => {
         track.activeSlotIndex = rowIdx;
         const clip = track.clips[rowIdx];
         if (clip && !clip.disabled) {
-          startClipPlayback(tIdx, rowIdx, false);
+          if (isStemSyncActive) {
+            const effectiveEnd = clip.endTime || clip.duration;
+            if (sharedSyncOffset < effectiveEnd) {
+              startClipPlayback(tIdx, rowIdx, false, sharedSyncOffset);
+            } else {
+              pauseTrackHold(tIdx);
+              const n = getTrackNodes(track);
+              n.clip = clip;
+              n.currentPlayhead = effectiveEnd;
+            }
+          } else {
+            startClipPlayback(tIdx, rowIdx, false);
+          }
         } else {
           pauseTrackHold(tIdx);
           rewindTrackToStart(tIdx);
@@ -3636,7 +3900,7 @@
 
     function handlePointerDown(e) {
       if (!selectedClipTarget || !selectedClipTarget.clip) return;
-      const { clip, trackIndex } = selectedClipTarget;
+      const { clip, trackIndex, slotIndex } = selectedClipTarget;
       const coords = getCanvasCoordinates(e);
       const clickX = coords.x;
       const clickY = coords.y;
@@ -3658,13 +3922,17 @@
         const seekTime = (clickX / canvas.width) * clip.duration;
         const boundedSeekTime = Math.max(0, Math.min(clip.duration, seekTime));
         
-        const track = project.tracks[trackIndex];
-        const nodes = trackAudioNodes.get(track.id);
+        if (isStemSyncActive) {
+          syncScenePlayhead(slotIndex, boundedSeekTime, true);
+        } else {
+          const track = project.tracks[trackIndex];
+          const nodes = trackAudioNodes.get(track.id);
 
-        if (nodes && nodes.isPlaying && nodes.clip === clip) {
-          startClipPlayback(trackIndex, selectedClipTarget.slotIndex, false, boundedSeekTime);
-        } else if (nodes) {
-          nodes.currentPlayhead = boundedSeekTime;
+          if (nodes && nodes.isPlaying && nodes.clip === clip) {
+            startClipPlayback(trackIndex, slotIndex, false, boundedSeekTime);
+          } else if (nodes) {
+            nodes.currentPlayhead = boundedSeekTime;
+          }
         }
       }
     }
@@ -3822,12 +4090,12 @@
             if (nodes.isPlaying) {
               const elapsed = audioContext.currentTime - nodes.startCtxTime;
               cur = nodes.startOffset + elapsed;
-              if (clip.isLoop && !isPlaylistModeActive) {
+              if (clip.isLoop && !isPlaylistModeActive && !isStemSyncActive) {
                 const len = clip.endTime - clip.startTime;
                 if (len > 0) cur = clip.startTime + ((nodes.startOffset - clip.startTime + elapsed) % len);
               }
             } else {
-              cur = nodes.currentPlayhead || clip.startTime;
+              cur = (nodes.currentPlayhead !== undefined) ? nodes.currentPlayhead : clip.startTime;
             }
 
             const playX = (cur / clip.duration) * canvas.width;
@@ -4181,7 +4449,7 @@
 
       const exportData = {
         appName: 'Ramatloka Sora',
-        version: '2.3',
+        version: '2.4',
         exportedAt: new Date().toISOString(),
         projectName: project.projectName || "Untitled Session",
         sceneNames: project.sceneNames,
@@ -4238,6 +4506,7 @@
         if (data.tracks) {
           stopAllTracks();
           isPlaylistModeActive = false;
+          isStemSyncActive = false;
           playlistState = { isRunning: false, isPaused: false, currentIndex: -1, selectedModalRow: -1, selectedAvailableClip: null, delayTimer: null, delayRemaining: 0, delayInterval: null };
           
           project.tracks = data.tracks;
